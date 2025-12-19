@@ -116,8 +116,14 @@
             
             // Filter deals
             const filteredDeals = deals.filter(deal => {
-                // Handle "Daily" deals - they appear on every day
-                const matchesDay = deal.day === selectedDay || deal.day.toLowerCase() === 'daily';
+                const dealDay = deal.day.toLowerCase();
+                const isWeekday = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].includes(selectedDay.toLowerCase());
+                
+                // Handle different day types
+                const matchesDay = 
+                    deal.day === selectedDay || // Exact match
+                    dealDay === 'daily' || // Daily deals show every day
+                    (dealDay === 'weekdays' && isWeekday); // Weekdays deals show Mon-Fri only
                 
                 if (!matchesDay) return false;
                 if (dealType !== 'all' && deal.deal_type !== dealType) return false;
