@@ -3,389 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boulder Happy Hours</title>
+    <title>Boulder Happy Hours - Debug</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gradient-to-br from-orange-50 to-amber-50 min-h-screen">
-    <div id="root"></div>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-8">
+        <h1 class="text-3xl font-bold mb-4">Debug Test</h1>
+        <div id="status" class="bg-white p-4 rounded shadow">
+            <p>If you can see this, HTML is working...</p>
+            <p id="js-test" class="text-red-600">JavaScript not loaded yet</p>
+        </div>
+        <div id="root" class="mt-4"></div>
+    </div>
+    
+    <script>
+        // Test 1: Basic JavaScript
+        console.log('JavaScript is running!');
+        document.getElementById('js-test').textContent = 'JavaScript is working! ✓';
+        document.getElementById('js-test').className = 'text-green-600';
+    </script>
     
     <script type="module">
-        import React, { useState, useEffect } from 'https://cdn.skypack.dev/react@18.2.0';
-        import ReactDOM from 'https://cdn.skypack.dev/react-dom@18.2.0/client';
-
-        const SHEET_ID = '1fOO4xaEGOmRbL1IYHl0YbU2acWxoksjfaJBm9uf4rp4';
-        const SHEET_CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`;
+        // Test 2: Module imports
+        console.log('Module script is running!');
         
-        const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-        
-        function App() {
-            const [deals, setDeals] = useState([]);
-            const [loading, setLoading] = useState(true);
-            const [error, setError] = useState(null);
-            const [debugInfo, setDebugInfo] = useState('');
+        try {
+            // Test 3: React import
+            const React = await import('https://esm.sh/react@18.2.0');
+            const ReactDOM = await import('https://esm.sh/react-dom@18.2.0/client');
             
-            // Filters
-            const [selectedDay, setSelectedDay] = useState('');
-            const [dealType, setDealType] = useState('all'); // 'all', 'Food', 'Drink'
-            const [drinkFilter, setDrinkFilter] = useState('all'); // 'all', 'beer', 'cocktail', 'margarita'
+            console.log('React loaded successfully!');
             
-            // Get current day
-            useEffect(() => {
-                const today = new Date().getDay();
-                setSelectedDay(DAYS[today]);
-            }, []);
+            const { useState, useEffect } = React;
             
-            // Fetch data from Google Sheets
-            useEffect(() => {
-                async function fetchDeals() {
-                    try {
-                        setDebugInfo('Fetching from: ' + SHEET_CSV_URL);
-                        
-                        const response = await fetch(SHEET_CSV_URL);
-                        
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-                        
-                        const csvText = await response.text();
-                        setDebugInfo('CSV fetched, length: ' + csvText.length);
-                        
-                        if (csvText.length < 10) {
-                            throw new Error('CSV data is empty or too short');
-                        }
-                        
-                        // Parse CSV
-                        const rows = csvText.split('\n').map(row => {
-                            // Simple CSV parser (handles basic cases)
-                            const values = [];
-                            let current = '';
-                            let inQuotes = false;
+            const SHEET_ID = '1fOO4xaEGOmRbL1IYHl0YbU2acWxoksjfaJBm9uf4rp4';
+            const SHEET_CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`;
+            
+            function App() {
+                const [status, setStatus] = useState('Initializing...');
+                const [deals, setDeals] = useState([]);
+                const [csvRaw, setCsvRaw] = useState('');
+                
+                useEffect(() => {
+                    async function test() {
+                        try {
+                            setStatus('Fetching from Google Sheets...');
+                            console.log('Fetching:', SHEET_CSV_URL);
                             
-                            for (let char of row) {
-                                if (char === '"') {
-                                    inQuotes = !inQuotes;
-                                } else if (char === ',' && !inQuotes) {
-                                    values.push(current.trim());
-                                    current = '';
-                                } else {
-                                    current += char;
-                                }
+                            const response = await fetch(SHEET_CSV_URL);
+                            console.log('Response status:', response.status);
+                            
+                            if (!response.ok) {
+                                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                             }
-                            values.push(current.trim());
-                            return values;
-                        });
-                        
-                        setDebugInfo('Parsed ' + rows.length + ' rows');
-                        
-                        // Skip header row and filter out empty rows
-                        const dealsData = rows.slice(1)
-                            .filter(row => row[0] && row[0].length > 0)
-                            .map(row => ({
-                                venue: row[0],
-                                city: row[1],
-                                day: row[2],
-                                deal_type: row[3],
-                                time: row[4],
-                                deal_description: row[5],
-                                beer: row[6]?.toLowerCase() === 'x',
-                                cocktail: row[7]?.toLowerCase() === 'x',
-                                margarita: row[8]?.toLowerCase() === 'x'
-                            }));
-                        
-                        setDebugInfo('Found ' + dealsData.length + ' valid deals');
-                        setDeals(dealsData);
-                        setLoading(false);
-                    } catch (err) {
-                        console.error('Error fetching deals:', err);
-                        setError('Failed to load deals: ' + err.message);
-                        setDebugInfo('Error: ' + err.message);
-                        setLoading(false);
+                            
+                            const text = await response.text();
+                            console.log('CSV length:', text.length);
+                            console.log('First 500 chars:', text.substring(0, 500));
+                            
+                            setCsvRaw(text);
+                            setStatus('Data fetched! See console for details.');
+                            
+                            // Simple parse
+                            const lines = text.split('\n');
+                            const data = lines.slice(1)
+                                .filter(line => line.trim().length > 0)
+                                .map(line => {
+                                    const parts = line.split(',');
+                                    return {
+                                        venue: parts[0],
+                                        city: parts[1],
+                                        day: parts[2],
+                                        type: parts[3]
+                                    };
+                                });
+                            
+                            console.log('Parsed deals:', data);
+                            setDeals(data);
+                            
+                        } catch (error) {
+                            console.error('Error:', error);
+                            setStatus('ERROR: ' + error.message);
+                        }
                     }
-                }
+                    
+                    test();
+                }, []);
                 
-                fetchDeals();
-            }, []);
-            
-            // Filter deals
-            const filteredDeals = deals.filter(deal => {
-                // Filter by day
-                if (deal.day !== selectedDay) return false;
-                
-                // Filter by deal type
-                if (dealType !== 'all' && deal.deal_type !== dealType) return false;
-                
-                // Filter by drink type (only applies when dealType is 'Drink')
-                if (dealType === 'Drink' && drinkFilter !== 'all') {
-                    if (drinkFilter === 'beer' && !deal.beer) return false;
-                    if (drinkFilter === 'cocktail' && !deal.cocktail) return false;
-                    if (drinkFilter === 'margarita' && !deal.margarita) return false;
-                }
-                
-                return true;
-            });
-            
-            // Sort by time (earliest first)
-            const sortedDeals = [...filteredDeals].sort((a, b) => {
-                // Extract first time (e.g., "3-6pm" -> "3")
-                const getStartTime = (timeStr) => {
-                    if (!timeStr) return 24;
-                    const match = timeStr.match(/(\d+)/);
-                    return match ? parseInt(match[1]) : 24;
-                };
-                
-                return getStartTime(a.time) - getStartTime(b.time);
-            });
-            
-            if (loading) {
-                return (
-                    <div className="flex items-center justify-center min-h-screen">
-                        <div className="text-xl text-gray-600">Loading happy hours...</div>
-                    </div>
+                return React.createElement('div', { className: 'bg-white p-6 rounded shadow' },
+                    React.createElement('h2', { className: 'text-2xl font-bold mb-4' }, 'React App Status'),
+                    React.createElement('p', { className: 'mb-2' }, 'Status: ' + status),
+                    React.createElement('p', { className: 'mb-2' }, 'Deals found: ' + deals.length),
+                    
+                    deals.length > 0 && React.createElement('div', { className: 'mt-4 border-t pt-4' },
+                        React.createElement('h3', { className: 'font-bold mb-2' }, 'Deals:'),
+                        ...deals.map((deal, i) => 
+                            React.createElement('div', { key: i, className: 'mb-2 p-2 bg-gray-50 rounded' },
+                                React.createElement('div', null, '🍺 ' + deal.venue),
+                                React.createElement('div', { className: 'text-sm text-gray-600' }, 
+                                    deal.city + ' - ' + deal.day + ' - ' + deal.type
+                                )
+                            )
+                        )
+                    ),
+                    
+                    csvRaw && React.createElement('details', { className: 'mt-4 text-xs' },
+                        React.createElement('summary', { className: 'cursor-pointer font-bold' }, 'Raw CSV Data'),
+                        React.createElement('pre', { className: 'mt-2 p-2 bg-gray-100 overflow-auto' }, csvRaw)
+                    )
                 );
             }
             
-            if (error) {
-                return (
-                    <div className="flex flex-col items-center justify-center min-h-screen p-4">
-                        <div className="text-xl text-red-600 mb-4">{error}</div>
-                        <div className="text-sm text-gray-500 bg-gray-100 p-4 rounded max-w-2xl">
-                            <strong>Debug Info:</strong> {debugInfo}
-                        </div>
-                        <div className="mt-4 text-sm text-gray-600">
-                            <p>Make sure your Google Sheet is set to "Anyone with the link can view"</p>
-                        </div>
-                    </div>
-                );
-            }
+            const root = ReactDOM.createRoot(document.getElementById('root'));
+            root.render(React.createElement(App));
             
-            return (
-                <div className="container mx-auto px-4 py-8 max-w-6xl">
-                    {/* Header */}
-                    <div className="text-center mb-8">
-                        <h1 className="text-5xl font-bold text-amber-900 mb-2">
-                            🍻 Boulder Happy Hours
-                        </h1>
-                        <p className="text-lg text-gray-600">
-                            Find the best deals in Boulder County
-                        </p>
-                    </div>
-                    
-                    {/* Day Filter */}
-                    <div className="mb-6">
-                        <h2 className="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">
-                            Select Day
-                        </h2>
-                        <div className="flex flex-wrap gap-2">
-                            {DAYS.map(day => (
-                                <button
-                                    key={day}
-                                    onClick={() => setSelectedDay(day)}
-                                    className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                                        selectedDay === day
-                                            ? 'bg-amber-600 text-white shadow-lg scale-105'
-                                            : 'bg-white text-gray-700 hover:bg-amber-100'
-                                    }`}
-                                >
-                                    {day}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                    
-                    {/* Deal Type Toggle */}
-                    <div className="mb-6">
-                        <h2 className="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">
-                            Deal Type
-                        </h2>
-                        <div className="flex gap-2">
-                            <button
-                                onClick={() => {
-                                    setDealType('all');
-                                    setDrinkFilter('all');
-                                }}
-                                className={`px-6 py-2 rounded-lg font-medium transition-all ${
-                                    dealType === 'all'
-                                        ? 'bg-purple-600 text-white shadow-lg'
-                                        : 'bg-white text-gray-700 hover:bg-purple-100'
-                                }`}
-                            >
-                                All
-                            </button>
-                            <button
-                                onClick={() => {
-                                    setDealType('Food');
-                                    setDrinkFilter('all');
-                                }}
-                                className={`px-6 py-2 rounded-lg font-medium transition-all ${
-                                    dealType === 'Food'
-                                        ? 'bg-green-600 text-white shadow-lg'
-                                        : 'bg-white text-gray-700 hover:bg-green-100'
-                                }`}
-                            >
-                                🍕 Food
-                            </button>
-                            <button
-                                onClick={() => setDealType('Drink')}
-                                className={`px-6 py-2 rounded-lg font-medium transition-all ${
-                                    dealType === 'Drink'
-                                        ? 'bg-blue-600 text-white shadow-lg'
-                                        : 'bg-white text-gray-700 hover:bg-blue-100'
-                                }`}
-                            >
-                                🍺 Drink
-                            </button>
-                        </div>
-                    </div>
-                    
-                    {/* Drink Type Filter (only show when Drink is selected) */}
-                    {dealType === 'Drink' && (
-                        <div className="mb-6">
-                            <h2 className="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">
-                                Drink Type
-                            </h2>
-                            <div className="flex gap-2">
-                                <button
-                                    onClick={() => setDrinkFilter('all')}
-                                    className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                                        drinkFilter === 'all'
-                                            ? 'bg-blue-600 text-white shadow-lg'
-                                            : 'bg-white text-gray-700 hover:bg-blue-100'
-                                    }`}
-                                >
-                                    All Drinks
-                                </button>
-                                <button
-                                    onClick={() => setDrinkFilter('beer')}
-                                    className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                                        drinkFilter === 'beer'
-                                            ? 'bg-yellow-600 text-white shadow-lg'
-                                            : 'bg-white text-gray-700 hover:bg-yellow-100'
-                                    }`}
-                                >
-                                    🍺 Beer
-                                </button>
-                                <button
-                                    onClick={() => setDrinkFilter('cocktail')}
-                                    className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                                        drinkFilter === 'cocktail'
-                                            ? 'bg-pink-600 text-white shadow-lg'
-                                            : 'bg-white text-gray-700 hover:bg-pink-100'
-                                    }`}
-                                >
-                                    🍸 Cocktails
-                                </button>
-                                <button
-                                    onClick={() => setDrinkFilter('margarita')}
-                                    className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                                        drinkFilter === 'margarita'
-                                            ? 'bg-lime-600 text-white shadow-lg'
-                                            : 'bg-white text-gray-700 hover:bg-lime-100'
-                                    }`}
-                                >
-                                    🍹 Margaritas
-                                </button>
-                            </div>
-                        </div>
-                    )}
-                    
-                    {/* Results Count */}
-                    <div className="mb-4">
-                        <p className="text-gray-600">
-                            <span className="font-semibold text-amber-800">{sortedDeals.length}</span> deal{sortedDeals.length !== 1 ? 's' : ''} found for {selectedDay}
-                        </p>
-                    </div>
-                    
-                    {/* Deals Grid */}
-                    {sortedDeals.length === 0 ? (
-                        <div className="text-center py-12 bg-white rounded-lg shadow">
-                            <p className="text-xl text-gray-500">
-                                No deals found for this selection
-                            </p>
-                            <p className="text-gray-400 mt-2">
-                                Try selecting a different day or filter
-                            </p>
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {sortedDeals.map((deal, index) => (
-                                <div
-                                    key={index}
-                                    className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow overflow-hidden"
-                                >
-                                    {/* Card Header */}
-                                    <div className={`p-4 ${
-                                        deal.deal_type === 'Food' 
-                                            ? 'bg-gradient-to-r from-green-500 to-green-600' 
-                                            : 'bg-gradient-to-r from-blue-500 to-blue-600'
-                                    }`}>
-                                        <h3 className="text-xl font-bold text-white">
-                                            {deal.venue}
-                                        </h3>
-                                        <p className="text-green-50 text-sm">
-                                            📍 {deal.city}
-                                        </p>
-                                    </div>
-                                    
-                                    {/* Card Body */}
-                                    <div className="p-4">
-                                        <div className="flex items-center gap-2 mb-3">
-                                            <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                                                deal.deal_type === 'Food'
-                                                    ? 'bg-green-100 text-green-800'
-                                                    : 'bg-blue-100 text-blue-800'
-                                            }`}>
-                                                {deal.deal_type === 'Food' ? '🍕 Food' : '🍺 Drink'}
-                                            </span>
-                                            <span className="px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-sm font-medium">
-                                                ⏰ {deal.time}
-                                            </span>
-                                        </div>
-                                        
-                                        {/* Drink Tags */}
-                                        {deal.deal_type === 'Drink' && (
-                                            <div className="flex gap-2 mb-3">
-                                                {deal.beer && (
-                                                    <span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs font-medium">
-                                                        🍺 Beer
-                                                    </span>
-                                                )}
-                                                {deal.cocktail && (
-                                                    <span className="px-2 py-1 bg-pink-100 text-pink-800 rounded text-xs font-medium">
-                                                        🍸 Cocktail
-                                                    </span>
-                                                )}
-                                                {deal.margarita && (
-                                                    <span className="px-2 py-1 bg-lime-100 text-lime-800 rounded text-xs font-medium">
-                                                        🍹 Margarita
-                                                    </span>
-                                                )}
-                                            </div>
-                                        )}
-                                        
-                                        <p className="text-gray-700 text-base leading-relaxed">
-                                            {deal.deal_description}
-                                        </p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                    
-                    {/* Footer */}
-                    <div className="mt-12 text-center text-gray-500 text-sm">
-                        <p>Add your happy hour deals to the Google Sheet to see them here!</p>
-                        {debugInfo && (
-                            <div className="mt-2 text-xs bg-gray-100 p-2 rounded inline-block">
-                                Debug: {debugInfo}
-                            </div>
-                        )}
-                    </div>
+        } catch (error) {
+            console.error('Failed to load React:', error);
+            document.getElementById('root').innerHTML = `
+                <div class="bg-red-100 border border-red-400 text-red-700 p-4 rounded">
+                    <strong>Error loading React:</strong> ${error.message}
                 </div>
-            );
+            `;
         }
-        
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
     </script>
 </body>
 </html>
