@@ -13,7 +13,8 @@
         import React, { useState, useEffect } from 'https://cdn.skypack.dev/react@18.2.0';
         import ReactDOM from 'https://cdn.skypack.dev/react-dom@18.2.0/client';
 
-        const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1fOO4xaEGOmRbL1IYHl0YbU2acWxoksjfaJBm9uf4rp4/export?format=csv';
+        const SHEET_ID = '1fOO4xaEGOmRbL1IYHl0YbU2acWxoksjfaJBm9uf4rp4';
+        const SHEET_CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`;
         
         const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         
@@ -21,6 +22,7 @@
             const [deals, setDeals] = useState([]);
             const [loading, setLoading] = useState(true);
             const [error, setError] = useState(null);
+            const [debugInfo, setDebugInfo] = useState('');
             
             // Filters
             const [selectedDay, setSelectedDay] = useState('');
@@ -37,8 +39,20 @@
             useEffect(() => {
                 async function fetchDeals() {
                     try {
+                        setDebugInfo('Fetching from: ' + SHEET_CSV_URL);
+                        
                         const response = await fetch(SHEET_CSV_URL);
+                        
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        
                         const csvText = await response.text();
+                        setDebugInfo('CSV fetched, length: ' + csvText.length);
+                        
+                        if (csvText.length < 10) {
+                            throw new Error('CSV data is empty or too short');
+                        }
                         
                         // Parse CSV
                         const rows = csvText.split('\n').map(row => {
@@ -61,6 +75,8 @@
                             return values;
                         });
                         
+                        setDebugInfo('Parsed ' + rows.length + ' rows');
+                        
                         // Skip header row and filter out empty rows
                         const dealsData = rows.slice(1)
                             .filter(row => row[0] && row[0].length > 0)
@@ -76,10 +92,13 @@
                                 margarita: row[8]?.toLowerCase() === 'x'
                             }));
                         
+                        setDebugInfo('Found ' + dealsData.length + ' valid deals');
                         setDeals(dealsData);
                         setLoading(false);
                     } catch (err) {
-                        setError('Failed to load deals. Please try again.');
+                        console.error('Error fetching deals:', err);
+                        setError('Failed to load deals: ' + err.message);
+                        setDebugInfo('Error: ' + err.message);
                         setLoading(false);
                     }
                 }
@@ -127,8 +146,14 @@
             
             if (error) {
                 return (
-                    <div className="flex items-center justify-center min-h-screen">
-                        <div className="text-xl text-red-600">{error}</div>
+                    <div className="flex flex-col items-center justify-center min-h-screen p-4">
+                        <div className="text-xl text-red-600 mb-4">{error}</div>
+                        <div className="text-sm text-gray-500 bg-gray-100 p-4 rounded max-w-2xl">
+                            <strong>Debug Info:</strong> {debugInfo}
+                        </div>
+                        <div className="mt-4 text-sm text-gray-600">
+                            <p>Make sure your Google Sheet is set to "Anyone with the link can view"</p>
+                        </div>
                     </div>
                 );
             }
@@ -349,6 +374,11 @@
                     {/* Footer */}
                     <div className="mt-12 text-center text-gray-500 text-sm">
                         <p>Add your happy hour deals to the Google Sheet to see them here!</p>
+                        {debugInfo && (
+                            <div className="mt-2 text-xs bg-gray-100 p-2 rounded inline-block">
+                                Debug: {debugInfo}
+                            </div>
+                        )}
                     </div>
                 </div>
             );
