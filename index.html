@@ -105,7 +105,10 @@
             
             // Filter deals
             const filteredDeals = deals.filter(deal => {
-                if (deal.day !== selectedDay) return false;
+                // Handle "Daily" deals - they appear on every day
+                const matchesDay = deal.day === selectedDay || deal.day.toLowerCase() === 'daily';
+                
+                if (!matchesDay) return false;
                 if (dealType !== 'all' && deal.deal_type !== dealType) return false;
                 
                 if (dealType === 'Drink' && drinkFilter !== 'all') {
