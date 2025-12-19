@@ -46,19 +46,29 @@
                 values.push(current.trim());
                 
                 if (values[0]) {
-                    result.push({
+                    const deal = {
                         venue: values[0],
                         city: values[1] || '',
                         day: values[2] || '',
                         deal_type: values[3] || '',
                         time: values[4] || '',
                         deal_description: values[5] || '',
-                        beer: values[6]?.toLowerCase() === 'x',
-                        cocktail: values[7]?.toLowerCase() === 'x',
-                        margarita: values[8]?.toLowerCase() === 'x'
-                    });
+                        beer: (values[6] || '').toLowerCase().trim() === 'x',
+                        cocktail: (values[7] || '').toLowerCase().trim() === 'x',
+                        margarita: (values[8] || '').toLowerCase().trim() === 'x'
+                    };
+                    
+                    // Debug log for drinks with margarita tag
+                    if (deal.margarita) {
+                        console.log('Margarita deal found:', deal);
+                    }
+                    
+                    result.push(deal);
                 }
             }
+            
+            console.log('Total deals parsed:', result.length);
+            console.log('All deals:', result);
             
             return result;
         }
