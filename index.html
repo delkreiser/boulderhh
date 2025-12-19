@@ -159,7 +159,18 @@
                 // Header
                 React.createElement('div', { className: 'text-center mb-8' },
                     React.createElement('h1', { className: 'text-5xl font-bold text-amber-900 mb-2' }, '🍻 Boulder Happy Hours'),
-                    React.createElement('p', { className: 'text-lg text-gray-600' }, 'Find the best deals in Boulder County')
+                    React.createElement('p', { className: 'text-lg text-gray-600 mb-4' }, 'Find the best deals in Boulder County'),
+                    
+                    // Results Count Pill Button
+                    React.createElement('button', {
+                        onClick: () => {
+                            document.getElementById('deals-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        },
+                        className: 'inline-block px-6 py-3 bg-white/70 backdrop-blur-md border border-amber-200 rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-105 cursor-pointer'
+                    },
+                        React.createElement('span', { className: 'font-semibold text-amber-800 text-lg' }, sortedDeals.length),
+                        React.createElement('span', { className: 'text-gray-700 text-lg' }, ` deal${sortedDeals.length !== 1 ? 's' : ''} found for ${selectedDay}!`)
+                    )
                 ),
                 
                 // Day Filter
@@ -205,7 +216,6 @@
                 
                 // Drink Type Filter
                 dealType === 'Drink' && React.createElement('div', { className: 'mb-6' },
-                    React.createElement('h2', { className: 'text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide' }, 'Drink Type'),
                     React.createElement('div', { className: 'flex gap-2 justify-center' },
                         React.createElement('button', {
                             onClick: () => setDrinkFilter('all'),
@@ -240,15 +250,10 @@
                     )
                 ),
                 
-                // Results Count
-                React.createElement('div', { className: 'mb-4' },
-                    React.createElement('p', { className: 'text-gray-600' },
-                        React.createElement('span', { className: 'font-semibold text-amber-800' }, sortedDeals.length),
-                        ` deal${sortedDeals.length !== 1 ? 's' : ''} found for ${selectedDay}`
-                    )
-                ),
-                
                 // Deals Grid
+                React.createElement('div', { id: 'deals-section' },
+                // Deals Grid
+                React.createElement('div', { id: 'deals-section' },
                 sortedDeals.length === 0
                     ? React.createElement('div', { className: 'text-center py-12 bg-white rounded-lg shadow' },
                         React.createElement('p', { className: 'text-xl text-gray-500' }, 'No deals found for this selection'),
@@ -300,6 +305,7 @@
                             )
                         )
                     )
+                )
             );
         }
         
