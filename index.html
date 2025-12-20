@@ -76,7 +76,9 @@
                         sobo: (values[11] || '').toLowerCase().trim() === 'x',
                         dotobo: (values[12] || '').toLowerCase().trim() === 'x',
                         lesbo: (values[13] || '').toLowerCase().trim() === 'x',
-                        latenight: (values[14] || '').toLowerCase().trim() === 'x'
+                        thehill: (values[14] || '').toLowerCase().trim() === 'x',
+                        central: (values[15] || '').toLowerCase().trim() === 'x',
+                        latenight: (values[16] || '').toLowerCase().trim() === 'x'
                     };
                     
                     // Debug log for drinks with margarita tag
@@ -476,6 +478,8 @@
                                             else if (deal.sobo) neighborhood = 'SoBo';
                                             else if (deal.dotobo) neighborhood = 'DoToBoCo';
                                             else if (deal.lesbo) neighborhood = 'LesBo';
+                                            else if (deal.thehill) neighborhood = 'The Hill';
+                                            else if (deal.central) neighborhood = 'Central';
                                             
                                             return `📍 ${venueGroup.city}${neighborhood ? ` • 🏡 ${neighborhood}` : ''}`;
                                         })()
