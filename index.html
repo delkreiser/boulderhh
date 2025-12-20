@@ -138,23 +138,37 @@
                         return false;
                     }
                     
-                    // Match time patterns
-                    const timeMatch = timeStr.match(/(\d+)(?::(\d+))?\s*(?:pm|PM)?[\s\-–to]*(\d+)?(?::(\d+))?\s*(?:pm|PM)?/);
+                    // Match time patterns - improved regex to capture AM/PM for each time
+                    const timeMatch = timeStr.match(/(\d+)(?::(\d+))?\s*(am|pm|AM|PM)?[\s\-–to]+(\d+)?(?::(\d+))?\s*(am|pm|AM|PM)?/i);
                     
                     if (timeMatch) {
                         let startHour = parseInt(timeMatch[1]);
                         let startMin = timeMatch[2] ? parseInt(timeMatch[2]) : 0;
-                        const endHour = timeMatch[3] ? parseInt(timeMatch[3]) : null;
-                        const endMin = timeMatch[4] ? parseInt(timeMatch[4]) : 0;
+                        const startPeriod = timeMatch[3] ? timeMatch[3].toLowerCase() : null;
+                        const endHour = timeMatch[4] ? parseInt(timeMatch[4]) : null;
+                        const endMin = timeMatch[5] ? parseInt(timeMatch[5]) : 0;
+                        const endPeriod = timeMatch[6] ? timeMatch[6].toLowerCase() : null;
                         
-                        // Convert to 24-hour format (since we confirmed it has PM)
-                        if (startHour !== 12) {
+                        // Convert start time to 24-hour format
+                        if (startPeriod === 'pm' && startHour !== 12) {
                             startHour += 12;
+                        } else if (startPeriod === 'am' && startHour === 12) {
+                            startHour = 0;
                         }
                         
+                        // If start time has AM, it's not late night
+                        if (startPeriod === 'am') {
+                            return false;
+                        }
+                        
+                        // Convert end time to 24-hour format
                         let endHour24 = endHour;
-                        if (endHour24 && endHour24 !== 12) {
-                            endHour24 += 12;
+                        if (endHour24) {
+                            if (endPeriod === 'pm' && endHour24 !== 12) {
+                                endHour24 += 12;
+                            } else if (endPeriod === 'am' && endHour24 === 12) {
+                                endHour24 = 0;
+                            }
                         }
                         
                         // Check if deal runs during late night hours (at or after 8:00pm = 20:00)
