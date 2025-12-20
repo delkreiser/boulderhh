@@ -157,10 +157,10 @@
                             endHour24 += 12;
                         }
                         
-                        // Check if deal runs during late night hours (after 8:00pm = 20:00)
-                        // Start time must be >= 8:01pm (20:01) or end time must be >= 8:01pm
+                        // Check if deal runs during late night hours (at or after 8:00pm = 20:00)
+                        // Start time must be >= 8:00pm (20:00) or end time must be >= 8:00pm
                         const startTime = startHour * 60 + startMin; // Convert to minutes
-                        const lateNightStart = 20 * 60 + 1; // 8:01pm in minutes
+                        const lateNightStart = 20 * 60; // 8:00pm in minutes (changed from 8:01pm)
                         
                         const startsLateNight = startTime >= lateNightStart;
                         
