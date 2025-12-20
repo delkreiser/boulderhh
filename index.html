@@ -4,6 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Boulder Happy Hours</title>
+    
+    <!-- Open Graph / Social Media Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://boulderhappyhour.vercel.app/">
+    <meta property="og:title" content="Boulder Happy Hours">
+    <meta property="og:description" content="Find the best happy hour deals in Boulder County - food specials, drink deals, and late night offers">
+    <meta property="og:image" content="https://boulderhappyhour.vercel.app/images/boulderhappyhour.jpg">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://boulderhappyhour.vercel.app/">
+    <meta name="twitter:title" content="Boulder Happy Hours">
+    <meta name="twitter:description" content="Find the best happy hour deals in Boulder County - food specials, drink deals, and late night offers">
+    <meta name="twitter:image" content="https://boulderhappyhour.vercel.app/images/boulderhappyhour.jpg">
+    
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gradient-to-br from-orange-50 to-amber-50 min-h-screen">
@@ -56,7 +71,8 @@
                         beer: (values[6] || '').toLowerCase().trim() === 'x',
                         wine: (values[7] || '').toLowerCase().trim() === 'x',
                         cocktail: (values[8] || '').toLowerCase().trim() === 'x',
-                        margarita: (values[9] || '').toLowerCase().trim() === 'x'
+                        margarita: (values[9] || '').toLowerCase().trim() === 'x',
+                        neighborhood: values[10] || '' // SoBo, NoBo, LesBo, DoToBoCo
                     };
                     
                     // Debug log for drinks with margarita tag
@@ -446,7 +462,9 @@
                                     }`
                                 },
                                     React.createElement('h3', { className: 'text-xl font-bold text-white' }, venueGroup.venue),
-                                    React.createElement('p', { className: 'text-purple-50 text-sm' }, `📍 ${venueGroup.city}`)
+                                    React.createElement('p', { className: 'text-purple-50 text-sm' }, 
+                                        `📍 ${venueGroup.city}${venueGroup.deals[0].neighborhood ? ` • 🏡 ${venueGroup.deals[0].neighborhood}` : ''}`
+                                    )
                                 ),
                                 
                                 // Card Body - Loop through all deals for this venue
