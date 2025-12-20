@@ -129,16 +129,34 @@
                 if (!matchesDay) return false;
                 if (dealType !== 'all' && deal.deal_type !== dealType) return false;
                 
-                // Late Night filter - check if deal starts at or after 9pm
+                // Late Night filter - check if deal runs anytime between 8pm-11:59pm
                 if (lateNightOnly) {
                     const timeStr = deal.time || '';
-                    const match = timeStr.match(/(\d+)/);
-                    if (match) {
-                        const startHour = parseInt(match[1]);
-                        // Handle both 12-hour format (9pm = 9) and check for pm indicators
-                        // Deals starting at 9, 10, 11, 12 (and contains "pm" or is after typical lunch hours)
-                        const isLateNight = startHour >= 9 && startHour <= 12;
-                        if (!isLateNight) return false;
+                    // Match patterns like "5:00pm - 9:00pm" or "8pm-11pm" or "9:30pm"
+                    const timeMatch = timeStr.match(/(\d+)(?::(\d+))?\s*(?:pm|PM|am|AM)?[\s\-–to]*(\d+)?(?::(\d+))?\s*(?:pm|PM|am|AM)?/);
+                    
+                    if (timeMatch) {
+                        let startHour = parseInt(timeMatch[1]);
+                        const endHour = timeMatch[3] ? parseInt(timeMatch[3]) : null;
+                        
+                        // Convert to 24-hour format if needed
+                        // If time string contains "pm" or hours are in typical evening range
+                        const isPM = timeStr.toLowerCase().includes('pm') || (startHour >= 3 && startHour <= 11);
+                        if (isPM && startHour < 12) {
+                            startHour += 12;
+                        }
+                        
+                        let endHour24 = endHour;
+                        if (endHour24 && isPM && endHour24 < 12) {
+                            endHour24 += 12;
+                        }
+                        
+                        // Check if deal runs during late night hours (8pm=20 to 11:59pm=23)
+                        // Include if: starts at/after 8pm OR ends at/after 8pm
+                        const startsLateNight = startHour >= 20; // 8pm or later
+                        const endsLateNight = endHour24 && endHour24 >= 20; // Ends at 8pm or later
+                        
+                        if (!startsLateNight && !endsLateNight) return false;
                     } else {
                         return false; // No valid time found
                     }
@@ -280,16 +298,26 @@
                     React.createElement('div', { className: 'flex gap-2 justify-center' },
                         React.createElement('button', {
                             onClick: () => setLateNightOnly(!lateNightOnly),
-                            className: `px-6 py-2 rounded-lg font-medium transition-all ${
+                            className: `px-6 py-2 rounded-lg font-medium transition-all relative overflow-hidden ${
                                 lateNightOnly 
                                     ? 'bg-gradient-to-r from-indigo-900 to-purple-900 text-white shadow-lg scale-105' 
                                     : 'bg-gradient-to-r from-gray-800 to-gray-900 text-gray-300 hover:from-indigo-800 hover:to-purple-800 hover:text-white'
-                            }`
-                        }, '🌛 Late Night (9pm+)')
+                            }`,
+                            style: lateNightOnly ? {
+                                backgroundImage: `
+                                    radial-gradient(circle at 20% 30%, rgba(255,255,255,0.3) 1px, transparent 1px),
+                                    radial-gradient(circle at 60% 70%, rgba(255,255,255,0.2) 1px, transparent 1px),
+                                    radial-gradient(circle at 80% 20%, rgba(255,255,255,0.25) 1px, transparent 1px),
+                                    radial-gradient(circle at 30% 80%, rgba(255,255,255,0.2) 1px, transparent 1px),
+                                    radial-gradient(circle at 90% 60%, rgba(255,255,255,0.3) 1px, transparent 1px),
+                                    radial-gradient(circle at 15% 50%, rgba(255,255,255,0.2) 1px, transparent 1px),
+                                    linear-gradient(to right, rgb(49, 46, 129), rgb(88, 28, 135))
+                                `,
+                                backgroundSize: '100% 100%'
+                            } : {}
+                        }, '🌛 Late Night')
                     )
                 ),
-                
-                // Drink Type Filter
                 dealType === 'Drink' && React.createElement('div', { className: 'mb-6' },
                     React.createElement('div', { className: 'flex flex-wrap gap-2 justify-center' },
                         React.createElement('button', {
