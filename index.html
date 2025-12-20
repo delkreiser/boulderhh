@@ -313,7 +313,10 @@
             return React.createElement('div', { className: 'container mx-auto px-4 py-8 max-w-6xl' },
                 // Header
                 React.createElement('div', { className: 'text-center mb-8' },
-                    React.createElement('h1', { className: 'text-5xl font-bold text-amber-900 mb-2' }, '🍻 Boulder Happy Hours'),
+                    React.createElement('h1', { className: 'text-5xl font-bold text-amber-900 mb-2 flex flex-wrap justify-center items-center gap-2' }, 
+                        React.createElement('span', null, '🍻'),
+                        React.createElement('span', null, 'Boulder Happy Hours')
+                    ),
                     React.createElement('p', { className: 'text-lg text-gray-600 mb-4' }, 'Find the best deals in Boulder County'),
                     
                     // Results Count Pill Button
