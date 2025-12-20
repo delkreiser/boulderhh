@@ -172,16 +172,17 @@
                         }
                         
                         // Check if deal runs during late night hours (at or after 8:00pm = 20:00)
-                        // Start time must be >= 8:00pm (20:00) or end time must be >= 8:00pm
+                        // BUT exclude deals that END at exactly 8:00pm
                         const startTime = startHour * 60 + startMin; // Convert to minutes
-                        const lateNightStart = 20 * 60; // 8:00pm in minutes (changed from 8:01pm)
+                        const lateNightStart = 20 * 60; // 8:00pm in minutes
                         
                         const startsLateNight = startTime >= lateNightStart;
                         
                         let endsLateNight = false;
                         if (endHour24) {
                             const endTime = endHour24 * 60 + endMin;
-                            endsLateNight = endTime >= lateNightStart;
+                            // Must end AFTER 8:00pm, not AT 8:00pm
+                            endsLateNight = endTime > lateNightStart;
                         }
                         
                         if (!startsLateNight && !endsLateNight) {
