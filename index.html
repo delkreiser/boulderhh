@@ -470,7 +470,7 @@
                                     React.createElement('h3', { className: 'text-xl font-bold text-white mb-1' }, 
                                         venueGroup.venue
                                     ),
-                                    React.createElement('p', { className: 'text-purple-50 text-sm' }, 
+                                    React.createElement('p', { className: 'text-purple-50 text-sm mb-0.5' }, 
                                         (() => {
                                             const deal = venueGroup.deals[0];
                                             let neighborhood = '';
@@ -481,8 +481,11 @@
                                             else if (deal.thehill) neighborhood = 'The Hill';
                                             else if (deal.central) neighborhood = 'Central';
                                             
-                                            return `📍 ${venueGroup.city}${neighborhood ? ` • 🏡 ${neighborhood}` : ''} • ⏰ ${deal.time}`;
+                                            return `📍 ${venueGroup.city}${neighborhood ? ` • 🏡 ${neighborhood}` : ''}`;
                                         })()
+                                    ),
+                                    React.createElement('p', { className: 'text-purple-50 text-sm' }, 
+                                        `⏰ ${venueGroup.deals[0].time}`
                                     )
                                 ),
                                 
