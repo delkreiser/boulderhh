@@ -288,30 +288,6 @@
                     )
                 ),
                 
-                // Deal Type Toggle
-                React.createElement('div', { className: 'mb-6' },
-                    React.createElement('div', { className: 'flex gap-2 justify-center' },
-                        React.createElement('button', {
-                            onClick: () => { setDealType('all'); setDrinkFilter('all'); },
-                            className: `px-6 py-2 rounded-lg font-medium transition-all ${
-                                dealType === 'all' ? 'bg-purple-600 text-white shadow-lg' : 'bg-white text-gray-700 hover:bg-purple-100'
-                            }`
-                        }, 'All'),
-                        React.createElement('button', {
-                            onClick: () => { setDealType('Food'); setDrinkFilter('all'); },
-                            className: `px-6 py-2 rounded-lg font-medium transition-all ${
-                                dealType === 'Food' ? 'bg-green-600 text-white shadow-lg' : 'bg-white text-gray-700 hover:bg-green-100'
-                            }`
-                        }, '🍕 Food'),
-                        React.createElement('button', {
-                            onClick: () => setDealType('Drink'),
-                            className: `px-6 py-2 rounded-lg font-medium transition-all ${
-                                dealType === 'Drink' ? 'bg-blue-600 text-white shadow-lg' : 'bg-white text-gray-700 hover:bg-blue-100'
-                            }`
-                        }, '🍺 Drink')
-                    )
-                ),
-                
                 // Late Night Filter
                 React.createElement('div', { className: 'mb-6' },
                     React.createElement('div', { className: 'flex gap-2 justify-center' },
@@ -347,6 +323,30 @@
                                 backgroundSize: '100% 100%'
                             }
                         }, '🌛 Late Night')
+                    )
+                ),
+                
+                // Deal Type Toggle
+                React.createElement('div', { className: 'mb-6' },
+                    React.createElement('div', { className: 'flex gap-2 justify-center' },
+                        React.createElement('button', {
+                            onClick: () => { setDealType('all'); setDrinkFilter('all'); },
+                            className: `px-6 py-2 rounded-lg font-medium transition-all ${
+                                dealType === 'all' ? 'bg-purple-600 text-white shadow-lg' : 'bg-white text-gray-700 hover:bg-purple-100'
+                            }`
+                        }, 'All'),
+                        React.createElement('button', {
+                            onClick: () => { setDealType('Food'); setDrinkFilter('all'); },
+                            className: `px-6 py-2 rounded-lg font-medium transition-all ${
+                                dealType === 'Food' ? 'bg-green-600 text-white shadow-lg' : 'bg-white text-gray-700 hover:bg-green-100'
+                            }`
+                        }, '🍕 Food'),
+                        React.createElement('button', {
+                            onClick: () => setDealType('Drink'),
+                            className: `px-6 py-2 rounded-lg font-medium transition-all ${
+                                dealType === 'Drink' ? 'bg-blue-600 text-white shadow-lg' : 'bg-white text-gray-700 hover:bg-blue-100'
+                            }`
+                        }, '🍺 Drink')
                     )
                 ),
                 dealType === 'Drink' && React.createElement('div', { className: 'mb-6' },
