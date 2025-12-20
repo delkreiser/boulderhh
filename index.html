@@ -120,16 +120,7 @@
                 const dealDay = deal.day.toLowerCase();
                 const isWeekday = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].includes(selectedDay.toLowerCase());
                 
-                // Handle different day types
-                const matchesDay = 
-                    deal.day === selectedDay || // Exact match
-                    dealDay === 'daily' || // Daily deals show every day
-                    (dealDay === 'weekdays' && isWeekday); // Weekdays deals show Mon-Fri only
-                
-                if (!matchesDay) return false;
-                if (dealType !== 'all' && deal.deal_type !== dealType) return false;
-                
-                // Late Night filter - check if deal runs anytime from 8:01pm onwards
+                // When Late Night filter is active, ignore day filter and show all late night deals
                 if (lateNightOnly) {
                     const timeStr = deal.time || '';
                     
@@ -137,21 +128,26 @@
                     const hasPM = timeStr.toLowerCase().includes('pm');
                     const hasAM = timeStr.toLowerCase().includes('am');
                     
-                    // If it has AM, it's definitely not late night
+                    // If it has AM only (no PM), it's definitely not late night
                     if (hasAM && !hasPM) {
+                        return false;
+                    }
+                    
+                    // If no PM indicator, not late night
+                    if (!hasPM) {
                         return false;
                     }
                     
                     // Match time patterns
                     const timeMatch = timeStr.match(/(\d+)(?::(\d+))?\s*(?:pm|PM)?[\s\-–to]*(\d+)?(?::(\d+))?\s*(?:pm|PM)?/);
                     
-                    if (timeMatch && hasPM) {
+                    if (timeMatch) {
                         let startHour = parseInt(timeMatch[1]);
                         let startMin = timeMatch[2] ? parseInt(timeMatch[2]) : 0;
                         const endHour = timeMatch[3] ? parseInt(timeMatch[3]) : null;
                         const endMin = timeMatch[4] ? parseInt(timeMatch[4]) : 0;
                         
-                        // Convert to 24-hour format
+                        // Convert to 24-hour format (since we confirmed it has PM)
                         if (startHour !== 12) {
                             startHour += 12;
                         }
@@ -162,7 +158,7 @@
                         }
                         
                         // Check if deal runs during late night hours (after 8:00pm = 20:00)
-                        // Start time must be > 8:00pm (20:00) or end time must be > 8:00pm
+                        // Start time must be >= 8:01pm (20:01) or end time must be >= 8:01pm
                         const startTime = startHour * 60 + startMin; // Convert to minutes
                         const lateNightStart = 20 * 60 + 1; // 8:01pm in minutes
                         
@@ -174,12 +170,36 @@
                             endsLateNight = endTime >= lateNightStart;
                         }
                         
-                        if (!startsLateNight && !endsLateNight) return false;
-                    } else if (!hasPM) {
-                        // No PM indicator found, skip this deal
+                        if (!startsLateNight && !endsLateNight) {
+                            return false;
+                        }
+                        
+                        // If we get here, it's a valid late night deal - accept it regardless of day
+                        // Now apply other filters (deal type, drink type)
+                        if (dealType !== 'all' && deal.deal_type !== dealType) return false;
+                        
+                        if (dealType === 'Drink' && drinkFilter !== 'all') {
+                            if (drinkFilter === 'beer' && !deal.beer) return false;
+                            if (drinkFilter === 'wine' && !deal.wine) return false;
+                            if (drinkFilter === 'cocktail' && !deal.cocktail) return false;
+                            if (drinkFilter === 'margarita' && !deal.margarita) return false;
+                        }
+                        
+                        return true;
+                    } else {
                         return false;
                     }
                 }
+                
+                // Normal filtering when Late Night is NOT active
+                // Handle different day types
+                const matchesDay = 
+                    deal.day === selectedDay || // Exact match
+                    dealDay === 'daily' || // Daily deals show every day
+                    (dealDay === 'weekdays' && isWeekday); // Weekdays deals show Mon-Fri only
+                
+                if (!matchesDay) return false;
+                if (dealType !== 'all' && deal.deal_type !== dealType) return false;
                 
                 if (dealType === 'Drink' && drinkFilter !== 'all') {
                     if (drinkFilter === 'beer' && !deal.beer) return false;
