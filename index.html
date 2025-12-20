@@ -75,7 +75,8 @@
                         nobo: (values[10] || '').toLowerCase().trim() === 'x',
                         sobo: (values[11] || '').toLowerCase().trim() === 'x',
                         dotobo: (values[12] || '').toLowerCase().trim() === 'x',
-                        lesbo: (values[13] || '').toLowerCase().trim() === 'x'
+                        lesbo: (values[13] || '').toLowerCase().trim() === 'x',
+                        latenight: (values[14] || '').toLowerCase().trim() === 'x'
                     };
                     
                     // Debug log for drinks with margarita tag
@@ -487,7 +488,7 @@
                                             className: dealIndex > 0 ? 'mt-4 pt-4 border-t border-gray-200' : ''
                                         },
                                             // Deal Type Badge and Time
-                                            React.createElement('div', { className: 'flex items-center gap-2 mb-3' },
+                                            React.createElement('div', { className: 'flex items-center gap-2 mb-3 flex-wrap' },
                                                 React.createElement('span', {
                                                     className: `px-3 py-1 rounded-full text-sm font-medium ${
                                                         deal.deal_type === 'Food'
@@ -497,7 +498,11 @@
                                                 }, deal.deal_type === 'Food' ? '🍕 Food' : '🍺 Drink'),
                                                 React.createElement('span', { className: 'px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-sm font-medium' },
                                                     `⏰ ${deal.time}`
-                                                )
+                                                ),
+                                                // Late Night Tag
+                                                deal.latenight && React.createElement('span', { 
+                                                    className: 'px-3 py-1 bg-gradient-to-br from-gray-800 via-gray-900 to-black text-white rounded-full text-sm font-medium shadow-md'
+                                                }, '🌙 Late Night')
                                             ),
                                             
                                             // Drink Tags
