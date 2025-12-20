@@ -138,15 +138,54 @@
                 return true;
             });
             
-            // Sort by time
-            const sortedDeals = [...filteredDeals].sort((a, b) => {
+            // Group deals by venue when in "All" view
+            let displayDeals;
+            if (dealType === 'all') {
+                // Group by venue + city
+                const venueMap = new Map();
+                filteredDeals.forEach(deal => {
+                    const key = `${deal.venue}|${deal.city}`;
+                    if (!venueMap.has(key)) {
+                        venueMap.set(key, {
+                            venue: deal.venue,
+                            city: deal.city,
+                            deals: []
+                        });
+                    }
+                    venueMap.get(key).deals.push(deal);
+                });
+                displayDeals = Array.from(venueMap.values());
+            } else {
+                // Keep individual deals for Food/Drink view
+                displayDeals = filteredDeals.map(deal => ({
+                    venue: deal.venue,
+                    city: deal.city,
+                    deals: [deal]
+                }));
+            }
+            
+            // Sort deals within each venue by time
+            displayDeals.forEach(venueGroup => {
+                venueGroup.deals.sort((a, b) => {
+                    const getStartTime = (timeStr) => {
+                        if (!timeStr) return 24;
+                        const match = timeStr.match(/(\d+)/);
+                        return match ? parseInt(match[1]) : 24;
+                    };
+                    return getStartTime(a.time) - getStartTime(b.time);
+                });
+            });
+            
+            // Sort venues by earliest deal time
+            const sortedDisplayDeals = displayDeals.sort((a, b) => {
                 const getStartTime = (timeStr) => {
                     if (!timeStr) return 24;
                     const match = timeStr.match(/(\d+)/);
                     return match ? parseInt(match[1]) : 24;
                 };
-                
-                return getStartTime(a.time) - getStartTime(b.time);
+                const aTime = a.deals.length > 0 ? getStartTime(a.deals[0].time) : 24;
+                const bTime = b.deals.length > 0 ? getStartTime(b.deals[0].time) : 24;
+                return aTime - bTime;
             });
             
             if (loading) {
@@ -174,8 +213,8 @@
                         },
                         className: 'inline-block px-6 py-3 bg-white/70 backdrop-blur-md border border-amber-200 rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-105 cursor-pointer'
                     },
-                        React.createElement('span', { className: 'font-semibold text-amber-800 text-lg' }, sortedDeals.length),
-                        React.createElement('span', { className: 'text-gray-700 text-lg' }, ` deal${sortedDeals.length !== 1 ? 's' : ''} found for ${selectedDay}!`)
+                        React.createElement('span', { className: 'font-semibold text-amber-800 text-lg' }, sortedDisplayDeals.length),
+                        React.createElement('span', { className: 'text-gray-700 text-lg' }, ` ${dealType === 'all' ? 'venue' : 'deal'}${sortedDisplayDeals.length !== 1 ? 's' : ''} found for ${selectedDay}!`)
                     )
                 ),
                 
@@ -258,56 +297,70 @@
                 
                 // Deals Grid
                 React.createElement('div', { id: 'deals-section' },
-                sortedDeals.length === 0
+                sortedDisplayDeals.length === 0
                     ? React.createElement('div', { className: 'text-center py-12 bg-white rounded-lg shadow' },
                         React.createElement('p', { className: 'text-xl text-gray-500' }, 'No deals found for this selection'),
                         React.createElement('p', { className: 'text-gray-400 mt-2' }, 'Try selecting a different day or filter')
                     )
                     : React.createElement('div', { className: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' },
-                        ...sortedDeals.map((deal, index) =>
-                            React.createElement('div', {
+                        ...sortedDisplayDeals.map((venueGroup, index) => {
+                            const isAllView = dealType === 'all';
+                            const hasMultipleDeals = venueGroup.deals.length > 1;
+                            
+                            return React.createElement('div', {
                                 key: index,
                                 className: 'bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow overflow-hidden'
                             },
                                 // Card Header
                                 React.createElement('div', {
                                     className: `p-4 ${
-                                        deal.deal_type === 'Food'
-                                            ? 'bg-gradient-to-r from-green-500 to-green-600'
-                                            : 'bg-gradient-to-r from-blue-500 to-blue-600'
+                                        isAllView
+                                            ? 'bg-gradient-to-r from-purple-500 to-purple-600'
+                                            : venueGroup.deals[0].deal_type === 'Food'
+                                                ? 'bg-gradient-to-r from-green-500 to-green-600'
+                                                : 'bg-gradient-to-r from-blue-500 to-blue-600'
                                     }`
                                 },
-                                    React.createElement('h3', { className: 'text-xl font-bold text-white' }, deal.venue),
-                                    React.createElement('p', { className: 'text-green-50 text-sm' }, `📍 ${deal.city}`)
+                                    React.createElement('h3', { className: 'text-xl font-bold text-white' }, venueGroup.venue),
+                                    React.createElement('p', { className: 'text-purple-50 text-sm' }, `📍 ${venueGroup.city}`)
                                 ),
                                 
-                                // Card Body
+                                // Card Body - Loop through all deals for this venue
                                 React.createElement('div', { className: 'p-4' },
-                                    React.createElement('div', { className: 'flex items-center gap-2 mb-3' },
-                                        React.createElement('span', {
-                                            className: `px-3 py-1 rounded-full text-sm font-medium ${
-                                                deal.deal_type === 'Food'
-                                                    ? 'bg-green-100 text-green-800'
-                                                    : 'bg-blue-100 text-blue-800'
-                                            }`
-                                        }, deal.deal_type === 'Food' ? '🍕 Food' : '🍺 Drink'),
-                                        React.createElement('span', { className: 'px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-sm font-medium' },
-                                            `⏰ ${deal.time}`
+                                    ...venueGroup.deals.map((deal, dealIndex) =>
+                                        React.createElement('div', {
+                                            key: dealIndex,
+                                            className: dealIndex > 0 ? 'mt-4 pt-4 border-t border-gray-200' : ''
+                                        },
+                                            // Deal Type Badge and Time
+                                            React.createElement('div', { className: 'flex items-center gap-2 mb-3' },
+                                                React.createElement('span', {
+                                                    className: `px-3 py-1 rounded-full text-sm font-medium ${
+                                                        deal.deal_type === 'Food'
+                                                            ? 'bg-green-100 text-green-800'
+                                                            : 'bg-blue-100 text-blue-800'
+                                                    }`
+                                                }, deal.deal_type === 'Food' ? '🍕 Food' : '🍺 Drink'),
+                                                React.createElement('span', { className: 'px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-sm font-medium' },
+                                                    `⏰ ${deal.time}`
+                                                )
+                                            ),
+                                            
+                                            // Drink Tags
+                                            deal.deal_type === 'Drink' && React.createElement('div', { className: 'flex gap-2 mb-3 flex-wrap' },
+                                                deal.beer && React.createElement('span', { className: 'px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs font-medium' }, '🍺 Beer'),
+                                                deal.wine && React.createElement('span', { className: 'px-2 py-1 bg-red-100 text-red-800 rounded text-xs font-medium' }, '🍷 Wine'),
+                                                deal.cocktail && React.createElement('span', { className: 'px-2 py-1 bg-pink-100 text-pink-800 rounded text-xs font-medium' }, '🍸 Cocktail'),
+                                                deal.margarita && React.createElement('span', { className: 'px-2 py-1 bg-lime-100 text-lime-800 rounded text-xs font-medium' }, '🍹 Margarita')
+                                            ),
+                                            
+                                            // Deal Description
+                                            React.createElement('p', { className: 'text-gray-700 text-base leading-relaxed' }, deal.deal_description)
                                         )
-                                    ),
-                                    
-                                    // Drink Tags
-                                    deal.deal_type === 'Drink' && React.createElement('div', { className: 'flex gap-2 mb-3' },
-                                        deal.beer && React.createElement('span', { className: 'px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs font-medium' }, '🍺 Beer'),
-                                        deal.wine && React.createElement('span', { className: 'px-2 py-1 bg-red-100 text-red-800 rounded text-xs font-medium' }, '🍷 Wine'),
-                                        deal.cocktail && React.createElement('span', { className: 'px-2 py-1 bg-pink-100 text-pink-800 rounded text-xs font-medium' }, '🍸 Cocktail'),
-                                        deal.margarita && React.createElement('span', { className: 'px-2 py-1 bg-lime-100 text-lime-800 rounded text-xs font-medium' }, '🍹 Margarita')
-                                    ),
-                                    
-                                    React.createElement('p', { className: 'text-gray-700 text-base leading-relaxed' }, deal.deal_description)
+                                    )
                                 )
-                            )
-                        )
+                            );
+                        })
                     )
                 )
             );
