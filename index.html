@@ -83,6 +83,7 @@
             const [selectedDay, setSelectedDay] = useState('');
             const [dealType, setDealType] = useState('all');
             const [drinkFilter, setDrinkFilter] = useState('all');
+            const [lateNightOnly, setLateNightOnly] = useState(false);
             
             // Get current day
             useEffect(() => {
@@ -127,6 +128,21 @@
                 
                 if (!matchesDay) return false;
                 if (dealType !== 'all' && deal.deal_type !== dealType) return false;
+                
+                // Late Night filter - check if deal starts at or after 9pm
+                if (lateNightOnly) {
+                    const timeStr = deal.time || '';
+                    const match = timeStr.match(/(\d+)/);
+                    if (match) {
+                        const startHour = parseInt(match[1]);
+                        // Handle both 12-hour format (9pm = 9) and check for pm indicators
+                        // Deals starting at 9, 10, 11, 12 (and contains "pm" or is after typical lunch hours)
+                        const isLateNight = startHour >= 9 && startHour <= 12;
+                        if (!isLateNight) return false;
+                    } else {
+                        return false; // No valid time found
+                    }
+                }
                 
                 if (dealType === 'Drink' && drinkFilter !== 'all') {
                     if (drinkFilter === 'beer' && !deal.beer) return false;
@@ -256,6 +272,20 @@
                                 dealType === 'Drink' ? 'bg-blue-600 text-white shadow-lg' : 'bg-white text-gray-700 hover:bg-blue-100'
                             }`
                         }, '🍺 Drink')
+                    )
+                ),
+                
+                // Late Night Filter
+                React.createElement('div', { className: 'mb-6' },
+                    React.createElement('div', { className: 'flex gap-2 justify-center' },
+                        React.createElement('button', {
+                            onClick: () => setLateNightOnly(!lateNightOnly),
+                            className: `px-6 py-2 rounded-lg font-medium transition-all ${
+                                lateNightOnly 
+                                    ? 'bg-gradient-to-r from-indigo-900 to-purple-900 text-white shadow-lg scale-105' 
+                                    : 'bg-gradient-to-r from-gray-800 to-gray-900 text-gray-300 hover:from-indigo-800 hover:to-purple-800 hover:text-white'
+                            }`
+                        }, '🌛 Late Night (9pm+)')
                     )
                 ),
                 
