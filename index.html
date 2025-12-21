@@ -490,7 +490,7 @@
                                             else if (deal.thehill) neighborhood = 'The Hill';
                                             else if (deal.central) neighborhood = 'Central';
                                             
-                                            return `📍 ${venueGroup.city}${neighborhood ? ` • 🏡 ${neighborhood}` : ''} • ⏰ ${deal.time}`;
+                                            return `📍 ${venueGroup.city}${neighborhood ? ` • 🏡 ${neighborhood}` : ''}`;
                                         })()
                                     )
                                 ),
@@ -511,6 +511,11 @@
                                                             : 'bg-blue-100 text-blue-800'
                                                     }`
                                                 }, deal.deal_type === 'Food' ? '🍕 Food' : '🍺 Drink')
+                                            ),
+                                            
+                                            // Time - now in deal body
+                                            React.createElement('p', { className: 'text-gray-600 text-sm font-medium mb-2' }, 
+                                                `⏰ ${deal.time}`
                                             ),
                                             
                                             // Deal Description - PROMINENT
