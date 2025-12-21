@@ -78,7 +78,8 @@
                         lesbo: (values[13] || '').toLowerCase().trim() === 'x',
                         thehill: (values[14] || '').toLowerCase().trim() === 'x',
                         central: (values[15] || '').toLowerCase().trim() === 'x',
-                        latenight: (values[16] || '').toLowerCase().trim() === 'x'
+                        latenight: (values[16] || '').toLowerCase().trim() === 'x',
+                        taco_tuesday: (values[17] || '').toLowerCase().trim() === 'x'
                     };
                     
                     // Debug log for drinks with margarita tag
@@ -556,8 +557,13 @@
                                             // Deal Description - PROMINENT
                                             React.createElement('p', { className: 'text-gray-700 text-base leading-relaxed mb-3 font-medium' }, deal.deal_description),
                                             
-                                            // Tags - Late Night and Drink Types
+                                            // Tags - Taco Tuesday, Late Night and Drink Types
                                             React.createElement('div', { className: 'flex gap-2 flex-wrap' },
+                                                // Taco Tuesday Tag - special orange/yellow gradient, shows first
+                                                (deal.taco_tuesday && (deal.day === 'Tuesday' || selectedDay === 'Tuesday')) && React.createElement('span', { 
+                                                    className: 'px-3 py-1 bg-gradient-to-r from-orange-400 to-yellow-400 text-orange-900 rounded-full text-sm font-bold shadow-md'
+                                                }, '🌮 Taco Tuesday!'),
+                                                
                                                 // Late Night Tag - same size as drink tags, lighter purple
                                                 deal.latenight && React.createElement('span', { 
                                                     className: 'px-2 py-1 bg-gradient-to-r from-purple-100 to-indigo-200 text-purple-800 rounded text-xs font-medium'
