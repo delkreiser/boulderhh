@@ -268,9 +268,24 @@
             displayDeals.forEach(venueGroup => {
                 venueGroup.deals.sort((a, b) => {
                     const getStartTime = (timeStr) => {
-                        if (!timeStr) return 24;
-                        const match = timeStr.match(/(\d+)/);
-                        return match ? parseInt(match[1]) : 24;
+                        if (!timeStr) return 9999; // Put items without time at end
+                        
+                        // Match hour and AM/PM
+                        const match = timeStr.match(/(\d+)(?::(\d+))?\s*(am|pm|AM|PM)?/);
+                        if (!match) return 9999;
+                        
+                        let hour = parseInt(match[1]);
+                        const minutes = match[2] ? parseInt(match[2]) : 0;
+                        const period = match[3] ? match[3].toLowerCase() : 'pm'; // Default to PM if not specified
+                        
+                        // Convert to 24-hour format
+                        if (period === 'pm' && hour !== 12) {
+                            hour += 12;
+                        } else if (period === 'am' && hour === 12) {
+                            hour = 0;
+                        }
+                        
+                        return hour * 60 + minutes; // Return total minutes for sorting
                     };
                     return getStartTime(a.time) - getStartTime(b.time);
                 });
@@ -279,12 +294,25 @@
             // Sort venues by earliest deal time
             const sortedDisplayDeals = displayDeals.sort((a, b) => {
                 const getStartTime = (timeStr) => {
-                    if (!timeStr) return 24;
-                    const match = timeStr.match(/(\d+)/);
-                    return match ? parseInt(match[1]) : 24;
+                    if (!timeStr) return 9999;
+                    
+                    const match = timeStr.match(/(\d+)(?::(\d+))?\s*(am|pm|AM|PM)?/);
+                    if (!match) return 9999;
+                    
+                    let hour = parseInt(match[1]);
+                    const minutes = match[2] ? parseInt(match[2]) : 0;
+                    const period = match[3] ? match[3].toLowerCase() : 'pm';
+                    
+                    if (period === 'pm' && hour !== 12) {
+                        hour += 12;
+                    } else if (period === 'am' && hour === 12) {
+                        hour = 0;
+                    }
+                    
+                    return hour * 60 + minutes;
                 };
-                const aTime = a.deals.length > 0 ? getStartTime(a.deals[0].time) : 24;
-                const bTime = b.deals.length > 0 ? getStartTime(b.deals[0].time) : 24;
+                const aTime = a.deals.length > 0 ? getStartTime(a.deals[0].time) : 9999;
+                const bTime = b.deals.length > 0 ? getStartTime(b.deals[0].time) : 9999;
                 return aTime - bTime;
             });
             
@@ -334,13 +362,8 @@
                                         : 'bg-white text-gray-700 hover:bg-amber-100'
                                 }`
                             }, day)
-                        )
-                    )
-                ),
-                
-                // Late Night Filter
-                React.createElement('div', { className: 'mb-6' },
-                    React.createElement('div', { className: 'flex gap-2 justify-center' },
+                        ),
+                        // Late Night button at the end of days
                         React.createElement('button', {
                             onClick: () => setLateNightOnly(!lateNightOnly),
                             className: `px-6 py-2 rounded-lg font-medium transition-all relative overflow-hidden ${
