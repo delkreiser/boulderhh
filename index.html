@@ -485,15 +485,15 @@
                                                 ? 'bg-gradient-to-br from-purple-500 via-purple-600 to-purple-800'
                                                 : venueGroup.deals[0].deal_type === 'Food'
                                                     ? 'bg-gradient-to-br from-green-500 via-green-600 to-green-800'
-                                                    : // Drink cards - dynamic gradient based on filter
+                                                    : // Drink cards - subtle horizontal gradient with more blue
                                                       dealType === 'Drink' && drinkFilter === 'beer'
-                                                        ? 'bg-gradient-to-br from-blue-500 via-yellow-500 to-yellow-700'
+                                                        ? 'bg-gradient-to-r from-blue-600 via-blue-500 to-yellow-400'
                                                         : dealType === 'Drink' && drinkFilter === 'wine'
-                                                            ? 'bg-gradient-to-br from-blue-500 via-red-500 to-red-700'
+                                                            ? 'bg-gradient-to-r from-blue-600 via-blue-500 to-red-400'
                                                             : dealType === 'Drink' && drinkFilter === 'cocktail'
-                                                                ? 'bg-gradient-to-br from-blue-500 via-pink-500 to-pink-700'
+                                                                ? 'bg-gradient-to-r from-blue-600 via-blue-500 to-pink-400'
                                                                 : dealType === 'Drink' && drinkFilter === 'margarita'
-                                                                    ? 'bg-gradient-to-br from-blue-500 via-lime-500 to-lime-700'
+                                                                    ? 'bg-gradient-to-r from-blue-600 via-blue-500 to-lime-400'
                                                                     : 'bg-gradient-to-br from-blue-500 via-blue-600 to-blue-800'
                                     }`,
                                     style: lateNightOnly ? {
