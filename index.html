@@ -329,23 +329,26 @@
             }
             
             return React.createElement('div', { className: 'container mx-auto px-4 py-8 max-w-6xl' },
-                // Header
-                React.createElement('div', { className: 'text-center mb-8' },
-                    React.createElement('h1', { className: 'text-5xl font-bold text-amber-900 mb-2 flex flex-wrap justify-center items-center gap-2' }, 
-                        React.createElement('span', null, '🍻'),
-                        React.createElement('span', null, 'Boulder Happy Hours')
-                    ),
-                    React.createElement('p', { className: 'text-lg text-gray-600 mb-4' }, 'Find the best deals in Boulder County'),
+                // Header - Image with overlay button
+                React.createElement('div', { className: 'relative mb-8' },
+                    // Header Image
+                    React.createElement('img', {
+                        src: '/images/boulderhh.jpg',
+                        alt: 'Boulder Happy Hours',
+                        className: 'w-full h-64 md:h-80 object-cover rounded-lg shadow-xl'
+                    }),
                     
-                    // Results Count Pill Button
-                    React.createElement('button', {
-                        onClick: () => {
-                            document.getElementById('deals-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    // Results Count Pill Button - overlaid on lower third
+                    React.createElement('div', { className: 'absolute bottom-6 left-0 right-0 flex justify-center' },
+                        React.createElement('button', {
+                            onClick: () => {
+                                document.getElementById('deals-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            },
+                            className: 'px-6 py-3 bg-white/90 backdrop-blur-md border border-amber-200 rounded-full shadow-xl hover:shadow-2xl transition-all hover:scale-105 cursor-pointer'
                         },
-                        className: 'inline-block px-6 py-3 bg-white/70 backdrop-blur-md border border-amber-200 rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-105 cursor-pointer'
-                    },
-                        React.createElement('span', { className: 'font-semibold text-amber-800 text-lg' }, sortedDisplayDeals.length),
-                        React.createElement('span', { className: 'text-gray-700 text-lg' }, ` ${dealType === 'all' ? 'venue' : 'deal'}${sortedDisplayDeals.length !== 1 ? 's' : ''} found for ${selectedDay}!`)
+                            React.createElement('span', { className: 'font-semibold text-amber-800 text-lg' }, sortedDisplayDeals.length),
+                            React.createElement('span', { className: 'text-gray-700 text-lg' }, ` deal${sortedDisplayDeals.length !== 1 ? 's' : ''} found!`)
+                        )
                     )
                 ),
                 
