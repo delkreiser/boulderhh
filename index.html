@@ -257,12 +257,20 @@
                 });
                 displayDeals = Array.from(venueMap.values());
             } else {
-                // Keep individual deals for Food/Drink view
-                displayDeals = filteredDeals.map(deal => ({
-                    venue: deal.venue,
-                    city: deal.city,
-                    deals: [deal]
-                }));
+                // Group by venue + city for Food/Drink view too (same as All view)
+                const venueMap = new Map();
+                filteredDeals.forEach(deal => {
+                    const key = `${deal.venue}|${deal.city}`;
+                    if (!venueMap.has(key)) {
+                        venueMap.set(key, {
+                            venue: deal.venue,
+                            city: deal.city,
+                            deals: []
+                        });
+                    }
+                    venueMap.get(key).deals.push(deal);
+                });
+                displayDeals = Array.from(venueMap.values());
             }
             
             // Sort deals within each venue by time
