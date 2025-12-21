@@ -142,7 +142,19 @@
                 const dealDay = deal.day.toLowerCase();
                 const isWeekday = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].includes(selectedDay.toLowerCase());
                 
-                // When Late Night filter is active, ignore day filter and show all late night deals
+                // Handle different day types
+                const matchesDay = 
+                    deal.day === selectedDay || // Exact match
+                    dealDay === 'daily' || // Daily deals show every day
+                    (dealDay === 'weekdays' && isWeekday); // Weekdays deals show Mon-Fri only
+                
+                // Day filter ALWAYS applies first
+                if (!matchesDay) return false;
+                
+                // Deal type filter
+                if (dealType !== 'all' && deal.deal_type !== dealType) return false;
+                
+                // Late Night filter - now works WITH day filter, not instead of it
                 if (lateNightOnly) {
                     const timeStr = deal.time || '';
                     
@@ -210,34 +222,12 @@
                         if (!startsLateNight && !endsLateNight) {
                             return false;
                         }
-                        
-                        // If we get here, it's a valid late night deal - accept it regardless of day
-                        // Now apply other filters (deal type, drink type)
-                        if (dealType !== 'all' && deal.deal_type !== dealType) return false;
-                        
-                        if (dealType === 'Drink' && drinkFilter !== 'all') {
-                            if (drinkFilter === 'beer' && !deal.beer) return false;
-                            if (drinkFilter === 'wine' && !deal.wine) return false;
-                            if (drinkFilter === 'cocktail' && !deal.cocktail) return false;
-                            if (drinkFilter === 'margarita' && !deal.margarita) return false;
-                        }
-                        
-                        return true;
                     } else {
                         return false;
                     }
                 }
                 
-                // Normal filtering when Late Night is NOT active
-                // Handle different day types
-                const matchesDay = 
-                    deal.day === selectedDay || // Exact match
-                    dealDay === 'daily' || // Daily deals show every day
-                    (dealDay === 'weekdays' && isWeekday); // Weekdays deals show Mon-Fri only
-                
-                if (!matchesDay) return false;
-                if (dealType !== 'all' && deal.deal_type !== dealType) return false;
-                
+                // Drink type filter
                 if (dealType === 'Drink' && drinkFilter !== 'all') {
                     if (drinkFilter === 'beer' && !deal.beer) return false;
                     if (drinkFilter === 'wine' && !deal.wine) return false;
