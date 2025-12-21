@@ -382,10 +382,10 @@
                                 }`
                             }, day)
                         ),
-                        // Late Night button on row 2
+                        // Late Night button on row 2 - prevent text wrapping
                         React.createElement('button', {
                             onClick: () => setLateNightOnly(!lateNightOnly),
-                            className: `flex-1 px-2 py-1.5 rounded-lg text-sm font-medium transition-all relative overflow-hidden ${
+                            className: `flex-1 px-2 py-1.5 rounded-lg text-sm font-medium transition-all relative overflow-hidden whitespace-nowrap ${
                                 lateNightOnly 
                                     ? 'bg-gradient-to-r from-indigo-900 to-purple-900 text-white shadow-lg scale-105' 
                                     : 'bg-gradient-to-r from-gray-800 to-gray-900 text-gray-300 hover:from-indigo-800 hover:to-purple-800 hover:text-white'
