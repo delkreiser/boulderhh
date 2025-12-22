@@ -30,7 +30,9 @@
         
         const { useState, useEffect } = React;
         const { createRoot } = ReactDOM;
-const SHEET_CSV_URL = '/api/deals';
+
+        const SHEET_ID = '1fOO4xaEGOmRbL1IYHl0YbU2acWxoksjfaJBm9uf4rp4';
+        const SHEET_CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`;
         
         const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         
@@ -75,7 +77,7 @@ const SHEET_CSV_URL = '/api/deals';
                         dotobo: (values[12] || '').toLowerCase().trim() === 'x',
                         lesbo: (values[13] || '').toLowerCase().trim() === 'x',
                         thehill: (values[14] || '').toLowerCase().trim() === 'x',
-                        central: (values[15] || '').toLowerCase().trim() === 'x',
+                        ctpatown: (values[15] || '').toLowerCase().trim() === 'x',
                         latenight: (values[16] || '').toLowerCase().trim() === 'x',
                         taco_tuesday: (values[17] || '').toLowerCase().trim() === 'x',
                         url: (values[18] || '').trim()
@@ -593,7 +595,7 @@ const SHEET_CSV_URL = '/api/deals';
                                             else if (deal.dotobo) neighborhood = 'DoToBoCo';
                                             else if (deal.lesbo) neighborhood = 'LesBo';
                                             else if (deal.thehill) neighborhood = 'The Hill';
-                                            else if (deal.central) neighborhood = 'Central';
+                                            else if (deal.ctpatown) neighborhood = 'CtPa Town';
                                             
                                             return `📍 ${venueGroup.city}${neighborhood ? ` • 🏡 ${neighborhood}` : ''}`;
                                         })()
