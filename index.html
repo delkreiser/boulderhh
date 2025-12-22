@@ -79,7 +79,8 @@
                         thehill: (values[14] || '').toLowerCase().trim() === 'x',
                         central: (values[15] || '').toLowerCase().trim() === 'x',
                         latenight: (values[16] || '').toLowerCase().trim() === 'x',
-                        taco_tuesday: (values[17] || '').toLowerCase().trim() === 'x'
+                        taco_tuesday: (values[17] || '').toLowerCase().trim() === 'x',
+                        url: (values[18] || '').trim()
                     };
                     
                     // Debug log for drinks with margarita tag
@@ -626,6 +627,17 @@
                                             
                                             // Deal Description - PROMINENT
                                             React.createElement('p', { className: 'text-gray-700 text-base leading-relaxed mb-3 font-medium' }, deal.deal_description),
+                                            
+                                            // URL Link - if exists
+                                            deal.url && React.createElement('a', {
+                                                href: deal.url,
+                                                target: '_blank',
+                                                rel: 'noopener noreferrer',
+                                                className: 'inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 font-medium mb-3 hover:underline'
+                                            }, 
+                                                'View Full Menu',
+                                                React.createElement('span', null, '→')
+                                            ),
                                             
                                             // Tags - Taco Tuesday, Late Night and Drink Types
                                             React.createElement('div', { className: 'flex gap-2 flex-wrap' },
