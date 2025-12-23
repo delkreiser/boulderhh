@@ -406,22 +406,22 @@
                             // Deal type buttons - mobile only (inline after Late Night)
                             React.createElement('button', {
                                 onClick: () => { setDealType('all'); setDrinkFilter('all'); },
-                                className: `md:hidden px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                                className: `md:hidden px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
                                     dealType === 'all' ? 'bg-purple-600 text-white' : 'bg-white/80 text-gray-700 hover:bg-purple-100'
                                 }`
                             }, 'All'),
                             React.createElement('button', {
                                 onClick: () => { setDealType('Food'); setDrinkFilter('all'); },
-                                className: `md:hidden px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                                className: `md:hidden px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
                                     dealType === 'Food' ? 'bg-green-600 text-white' : 'bg-white/80 text-gray-700 hover:bg-green-100'
                                 }`
-                            }, '🍕 Food'),
+                            }, '🍕'),
                             React.createElement('button', {
                                 onClick: () => setDealType('Drink'),
-                                className: `md:hidden px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                                className: `md:hidden px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
                                     dealType === 'Drink' ? 'bg-blue-600 text-white' : 'bg-white/80 text-gray-700 hover:bg-blue-100'
                                 }`
-                            }, '🍺 Drink')
+                            }, '🍺')
                         ),
                         // Deal type buttons - desktop/tablet only (separate row)
                         React.createElement('div', { className: 'hidden md:flex gap-2 justify-center' },
