@@ -343,11 +343,17 @@
             return React.createElement('div', { className: 'container mx-auto px-4 py-8 max-w-6xl' },
                 // Header - Image with overlay button
                 React.createElement('div', { className: 'relative mb-8' },
-                    // Header Image
+                    // Header Image - Mobile
                     React.createElement('img', {
                         src: '/images/boulderhh.jpg',
                         alt: 'Boulder Happy Hours',
-                        className: 'w-full h-64 md:h-80 object-cover rounded-lg shadow-xl'
+                        className: 'w-full h-64 object-cover rounded-lg shadow-xl md:hidden'
+                    }),
+                    // Header Image - Desktop
+                    React.createElement('img', {
+                        src: '/images/boulderhappyhour-1200x320.jpg',
+                        alt: 'Boulder Happy Hours',
+                        className: 'hidden md:block w-full h-80 object-cover rounded-lg shadow-xl'
                     }),
                     
                     // Results Count Pill Button - overlaid on lower third
