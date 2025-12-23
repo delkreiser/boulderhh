@@ -131,6 +131,9 @@
             useEffect(() => {
                 const today = new Date().getDay();
                 setSelectedDay(DAYS[today]);
+                
+                // Scroll to top on page load/refresh
+                window.scrollTo(0, 0);
             }, []);
             
             // Detect scroll to show/hide sticky filters
