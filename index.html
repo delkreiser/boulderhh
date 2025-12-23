@@ -144,6 +144,16 @@
                 return () => window.removeEventListener('scroll', handleScroll);
             }, []);
             
+            // Scroll to deals section when filters change (if sticky menu is visible)
+            useEffect(() => {
+                if (showStickyFilters) {
+                    const dealsSection = document.getElementById('deals-section');
+                    if (dealsSection) {
+                        dealsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }
+            }, [selectedDay, dealType, drinkFilter, lateNightOnly]);
+            
             // Fetch data
             useEffect(() => {
                 async function fetchDeals() {
