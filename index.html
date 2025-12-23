@@ -20,6 +20,23 @@
     <meta name="twitter:image" content="https://boulderhappyhour.vercel.app/images/boulderhappyhour.jpg">
     
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        fadeIn: 'fadeIn 0.3s ease-in-out'
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(-10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 </head>
 <body class="bg-gradient-to-br from-orange-50 to-amber-50 min-h-screen">
     <div id="root"></div>
@@ -108,11 +125,23 @@
             const [dealType, setDealType] = useState('all');
             const [drinkFilter, setDrinkFilter] = useState('all');
             const [lateNightOnly, setLateNightOnly] = useState(false);
+            const [showStickyFilters, setShowStickyFilters] = useState(false);
             
             // Get current day
             useEffect(() => {
                 const today = new Date().getDay();
                 setSelectedDay(DAYS[today]);
+            }, []);
+            
+            // Detect scroll to show/hide sticky filters
+            useEffect(() => {
+                const handleScroll = () => {
+                    // Show sticky filters after scrolling down 300px
+                    setShowStickyFilters(window.scrollY > 300);
+                };
+                
+                window.addEventListener('scroll', handleScroll);
+                return () => window.removeEventListener('scroll', handleScroll);
             }, []);
             
             // Fetch data
@@ -341,6 +370,60 @@
             }
             
             return React.createElement('div', { className: 'container mx-auto px-4 py-8 max-w-6xl' },
+                // Sticky Floating Glass Filter Menu (appears on scroll)
+                showStickyFilters && React.createElement('div', { 
+                    className: 'fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-5xl px-4 animate-fadeIn'
+                },
+                    React.createElement('div', { 
+                        className: 'bg-white/70 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/40 p-4'
+                    },
+                        // Day buttons compact
+                        React.createElement('div', { className: 'flex flex-wrap gap-1.5 justify-center mb-2' },
+                            ...DAYS.map(day =>
+                                React.createElement('button', {
+                                    key: day,
+                                    onClick: () => setSelectedDay(day),
+                                    className: `px-3 py-1 rounded-lg text-xs font-medium transition-all ${
+                                        selectedDay === day
+                                            ? 'bg-amber-600 text-white shadow-lg'
+                                            : 'bg-white/80 text-gray-700 hover:bg-amber-100'
+                                    }`
+                                }, day.substring(0, 3)) // Show abbreviated: Sun, Mon, Tue...
+                            ),
+                            // Late Night
+                            React.createElement('button', {
+                                onClick: () => setLateNightOnly(!lateNightOnly),
+                                className: `px-3 py-1 rounded-lg text-xs font-medium transition-all ${
+                                    lateNightOnly 
+                                        ? 'bg-gradient-to-r from-indigo-900 to-purple-900 text-white shadow-lg' 
+                                        : 'bg-gray-800 text-gray-300 hover:bg-indigo-800 hover:text-white'
+                                }`
+                            }, '🌛')
+                        ),
+                        // Deal type buttons
+                        React.createElement('div', { className: 'flex gap-2 justify-center' },
+                            React.createElement('button', {
+                                onClick: () => { setDealType('all'); setDrinkFilter('all'); },
+                                className: `px-4 py-1 rounded-lg text-xs font-medium transition-all ${
+                                    dealType === 'all' ? 'bg-purple-600 text-white' : 'bg-white/80 text-gray-700 hover:bg-purple-100'
+                                }`
+                            }, 'All'),
+                            React.createElement('button', {
+                                onClick: () => { setDealType('Food'); setDrinkFilter('all'); },
+                                className: `px-4 py-1 rounded-lg text-xs font-medium transition-all ${
+                                    dealType === 'Food' ? 'bg-green-600 text-white' : 'bg-white/80 text-gray-700 hover:bg-green-100'
+                                }`
+                            }, '🍕'),
+                            React.createElement('button', {
+                                onClick: () => setDealType('Drink'),
+                                className: `px-4 py-1 rounded-lg text-xs font-medium transition-all ${
+                                    dealType === 'Drink' ? 'bg-blue-600 text-white' : 'bg-white/80 text-gray-700 hover:bg-blue-100'
+                                }`
+                            }, '🍺')
+                        )
+                    )
+                ),
+                
                 // Header - Image with overlay button
                 React.createElement('div', { className: 'relative mb-8' },
                     // Header Image - Mobile
