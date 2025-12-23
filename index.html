@@ -149,7 +149,7 @@
                 if (showStickyFilters) {
                     const dealsSection = document.getElementById('deals-section');
                     if (dealsSection) {
-                        const yOffset = -120; // Offset for sticky menu height + spacing
+                        const yOffset = -140; // Offset for sticky menu height + spacing
                         const y = dealsSection.getBoundingClientRect().top + window.pageYOffset + yOffset;
                         window.scrollTo({ top: y, behavior: 'smooth' });
                     }
@@ -480,7 +480,7 @@
                             onClick: () => {
                                 const dealsSection = document.getElementById('deals-section');
                                 if (dealsSection) {
-                                    const yOffset = -120; // Offset for sticky menu height + spacing
+                                    const yOffset = -140; // Offset for sticky menu height + spacing
                                     const y = dealsSection.getBoundingClientRect().top + window.pageYOffset + yOffset;
                                     window.scrollTo({ top: y, behavior: 'smooth' });
                                 }
