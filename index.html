@@ -384,7 +384,8 @@
                 );
             }
             
-            return React.createElement('div', { className: 'container mx-auto px-4 py-8 max-w-6xl' },
+            return React.createElement('div', { className: 'min-h-screen bg-gradient-to-b from-slate-800 to-slate-900' },
+                React.createElement('div', { className: 'container mx-auto px-4 py-8 max-w-6xl' },
                 // Sticky Floating Glass Filter Menu (appears on scroll)
                 showStickyFilters && React.createElement('div', { 
                     className: 'fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-5xl px-4 animate-fadeIn'
@@ -505,10 +506,10 @@
                             React.createElement('button', {
                                 key: day,
                                 onClick: () => setSelectedDay(day),
-                                className: `flex-1 px-2 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                                className: `flex-1 px-2 py-1.5 rounded-lg text-sm font-medium transition-all backdrop-blur-md border ${
                                     selectedDay === day
-                                        ? 'bg-amber-600 text-white shadow-lg scale-105'
-                                        : 'bg-white text-gray-700 hover:bg-amber-100'
+                                        ? 'bg-white/95 text-slate-900 shadow-lg border-white/40 scale-105'
+                                        : 'bg-white/30 text-white border-white/20 hover:bg-white/40'
                                 }`
                             }, day)
                         )
@@ -519,10 +520,10 @@
                             React.createElement('button', {
                                 key: day,
                                 onClick: () => setSelectedDay(day),
-                                className: `flex-1 px-2 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                                className: `flex-1 px-2 py-1.5 rounded-lg text-sm font-medium transition-all backdrop-blur-md border ${
                                     selectedDay === day
-                                        ? 'bg-amber-600 text-white shadow-lg scale-105'
-                                        : 'bg-white text-gray-700 hover:bg-amber-100'
+                                        ? 'bg-white/95 text-slate-900 shadow-lg border-white/40 scale-105'
+                                        : 'bg-white/30 text-white border-white/20 hover:bg-white/40'
                                 }`
                             }, day)
                         ),
@@ -566,10 +567,10 @@
                             React.createElement('button', {
                                 key: day,
                                 onClick: () => setSelectedDay(day),
-                                className: `px-4 py-2 rounded-lg text-base font-medium transition-all ${
+                                className: `px-4 py-2 rounded-lg text-base font-medium transition-all backdrop-blur-md border ${
                                     selectedDay === day
-                                        ? 'bg-amber-600 text-white shadow-lg scale-105'
-                                        : 'bg-white text-gray-700 hover:bg-amber-100'
+                                        ? 'bg-white/95 text-slate-900 shadow-lg border-white/40 scale-105'
+                                        : 'bg-white/30 text-white border-white/20 hover:bg-white/40'
                                 }`
                             }, day)
                         ),
@@ -613,20 +614,26 @@
                     React.createElement('div', { className: 'flex gap-2 md:justify-center' },
                         React.createElement('button', {
                             onClick: () => { setDealType('all'); setDrinkFilter('all'); },
-                            className: `w-20 md:w-auto md:flex-none px-6 py-2 rounded-lg font-medium transition-all ${
-                                dealType === 'all' ? 'bg-gradient-to-br from-purple-500 via-purple-600 to-purple-800 text-white shadow-lg' : 'bg-white text-gray-700 hover:bg-purple-100'
+                            className: `w-20 md:w-auto md:flex-none px-6 py-2 rounded-lg font-medium transition-all backdrop-blur-md border ${
+                                dealType === 'all' 
+                                    ? 'bg-gradient-to-br from-purple-500 via-purple-600 to-purple-800 text-white shadow-lg border-purple-400' 
+                                    : 'bg-white/30 text-white border-white/20 hover:bg-white/40'
                             }`
                         }, 'All'),
                         React.createElement('button', {
                             onClick: () => { setDealType('Food'); setDrinkFilter('all'); },
-                            className: `flex-1 md:flex-none md:w-auto px-6 py-2 rounded-lg font-medium transition-all ${
-                                dealType === 'Food' ? 'bg-gradient-to-br from-green-500 via-green-600 to-green-800 text-white shadow-lg' : 'bg-white text-gray-700 hover:bg-green-100'
+                            className: `flex-1 md:flex-none md:w-auto px-6 py-2 rounded-lg font-medium transition-all backdrop-blur-md border ${
+                                dealType === 'Food' 
+                                    ? 'bg-gradient-to-br from-green-500 via-green-600 to-green-800 text-white shadow-lg border-green-400' 
+                                    : 'bg-white/30 text-white border-white/20 hover:bg-white/40'
                             }`
                         }, '🍕 Food'),
                         React.createElement('button', {
                             onClick: () => setDealType('Drink'),
-                            className: `flex-1 md:flex-none md:w-auto px-6 py-2 rounded-lg font-medium transition-all ${
-                                dealType === 'Drink' ? 'bg-gradient-to-br from-blue-500 via-blue-600 to-blue-800 text-white shadow-lg' : 'bg-white text-gray-700 hover:bg-blue-100'
+                            className: `flex-1 md:flex-none md:w-auto px-6 py-2 rounded-lg font-medium transition-all backdrop-blur-md border ${
+                                dealType === 'Drink' 
+                                    ? 'bg-gradient-to-br from-blue-500 via-blue-600 to-blue-800 text-white shadow-lg border-blue-400' 
+                                    : 'bg-white/30 text-white border-white/20 hover:bg-white/40'
                             }`
                         }, '🍺 Drink')
                     )
@@ -635,32 +642,42 @@
                     React.createElement('div', { className: 'flex flex-wrap gap-2 justify-center' },
                         React.createElement('button', {
                             onClick: () => setDrinkFilter('all'),
-                            className: `px-4 py-2 rounded-lg font-medium transition-all ${
-                                drinkFilter === 'all' ? 'bg-blue-600 text-white shadow-lg' : 'bg-white text-gray-700 hover:bg-blue-100'
+                            className: `px-4 py-2 rounded-lg font-medium transition-all backdrop-blur-md border ${
+                                drinkFilter === 'all' 
+                                    ? 'bg-blue-600 text-white shadow-lg border-blue-400' 
+                                    : 'bg-white/30 text-white border-white/20 hover:bg-white/40'
                             }`
                         }, 'All Drinks'),
                         React.createElement('button', {
                             onClick: () => setDrinkFilter('beer'),
-                            className: `px-4 py-2 rounded-lg font-medium transition-all ${
-                                drinkFilter === 'beer' ? 'bg-yellow-600 text-white shadow-lg' : 'bg-white text-gray-700 hover:bg-yellow-100'
+                            className: `px-4 py-2 rounded-lg font-medium transition-all backdrop-blur-md border ${
+                                drinkFilter === 'beer' 
+                                    ? 'bg-yellow-600 text-white shadow-lg border-yellow-400' 
+                                    : 'bg-white/30 text-white border-white/20 hover:bg-white/40'
                             }`
                         }, '🍺 Beer'),
                         React.createElement('button', {
                             onClick: () => setDrinkFilter('wine'),
-                            className: `px-4 py-2 rounded-lg font-medium transition-all ${
-                                drinkFilter === 'wine' ? 'bg-red-600 text-white shadow-lg' : 'bg-white text-gray-700 hover:bg-red-100'
+                            className: `px-4 py-2 rounded-lg font-medium transition-all backdrop-blur-md border ${
+                                drinkFilter === 'wine' 
+                                    ? 'bg-red-600 text-white shadow-lg border-red-400' 
+                                    : 'bg-white/30 text-white border-white/20 hover:bg-white/40'
                             }`
                         }, '🍷 Wine'),
                         React.createElement('button', {
                             onClick: () => setDrinkFilter('cocktail'),
-                            className: `px-4 py-2 rounded-lg font-medium transition-all ${
-                                drinkFilter === 'cocktail' ? 'bg-pink-600 text-white shadow-lg' : 'bg-white text-gray-700 hover:bg-pink-100'
+                            className: `px-4 py-2 rounded-lg font-medium transition-all backdrop-blur-md border ${
+                                drinkFilter === 'cocktail' 
+                                    ? 'bg-pink-600 text-white shadow-lg border-pink-400' 
+                                    : 'bg-white/30 text-white border-white/20 hover:bg-white/40'
                             }`
                         }, '🍸 Cocktails'),
                         React.createElement('button', {
                             onClick: () => setDrinkFilter('margarita'),
-                            className: `px-4 py-2 rounded-lg font-medium transition-all ${
-                                drinkFilter === 'margarita' ? 'bg-lime-600 text-white shadow-lg' : 'bg-white text-gray-700 hover:bg-lime-100'
+                            className: `px-4 py-2 rounded-lg font-medium transition-all backdrop-blur-md border ${
+                                drinkFilter === 'margarita' 
+                                    ? 'bg-lime-600 text-white shadow-lg border-lime-400' 
+                                    : 'bg-white/30 text-white border-white/20 hover:bg-white/40'
                             }`
                         }, '🍹 Margaritas')
                     )
