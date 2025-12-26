@@ -413,11 +413,38 @@
                             // Late Night
                             React.createElement('button', {
                                 onClick: () => setLateNightOnly(!lateNightOnly),
-                                className: `px-3 py-1.5 md:px-6 md:py-2 rounded-lg text-sm md:text-base font-medium transition-all ${
+                                className: `px-3 py-1.5 md:px-6 md:py-2 rounded-lg text-sm md:text-base font-medium transition-all relative overflow-hidden ${
                                     lateNightOnly 
                                         ? 'bg-gradient-to-r from-indigo-900 to-purple-900 text-white shadow-lg' 
-                                        : 'bg-gray-800 text-gray-300 hover:bg-indigo-800 hover:text-white'
-                                }`
+                                        : 'bg-gray-800 text-gray-300 hover:from-indigo-800 hover:to-purple-800 hover:text-white'
+                                }`,
+                                style: lateNightOnly ? {
+                                    backgroundImage: `
+                                        radial-gradient(circle at 20% 30%, rgba(255,255,255,0.7) 1px, transparent 1px),
+                                        radial-gradient(circle at 60% 70%, rgba(255,255,255,0.6) 1px, transparent 1px),
+                                        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.65) 1px, transparent 1px),
+                                        radial-gradient(circle at 30% 80%, rgba(255,255,255,0.55) 1px, transparent 1px),
+                                        radial-gradient(circle at 90% 60%, rgba(255,255,255,0.7) 1px, transparent 1px),
+                                        radial-gradient(circle at 15% 50%, rgba(255,255,255,0.6) 1px, transparent 1px),
+                                        radial-gradient(circle at 45% 15%, rgba(255,255,255,0.5) 1px, transparent 1px),
+                                        radial-gradient(circle at 70% 45%, rgba(255,255,255,0.65) 1px, transparent 1px),
+                                        linear-gradient(to right, rgb(49, 46, 129), rgb(88, 28, 135))
+                                    `,
+                                    backgroundSize: '100% 100%'
+                                } : {
+                                    backgroundImage: `
+                                        radial-gradient(circle at 20% 30%, rgba(255,255,255,0.45) 1px, transparent 1px),
+                                        radial-gradient(circle at 60% 70%, rgba(255,255,255,0.38) 1px, transparent 1px),
+                                        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.42) 1px, transparent 1px),
+                                        radial-gradient(circle at 30% 80%, rgba(255,255,255,0.36) 1px, transparent 1px),
+                                        radial-gradient(circle at 90% 60%, rgba(255,255,255,0.45) 1px, transparent 1px),
+                                        radial-gradient(circle at 15% 50%, rgba(255,255,255,0.4) 1px, transparent 1px),
+                                        radial-gradient(circle at 45% 15%, rgba(255,255,255,0.35) 1px, transparent 1px),
+                                        radial-gradient(circle at 70% 45%, rgba(255,255,255,0.42) 1px, transparent 1px),
+                                        linear-gradient(to right, rgb(31, 41, 55), rgb(17, 24, 39))
+                                    `,
+                                    backgroundSize: '100% 100%'
+                                }
                             }, '🌛 Late Night'),
                             // Deal type buttons - mobile only (inline after Late Night)
                             React.createElement('button', {
