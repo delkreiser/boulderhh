@@ -730,11 +730,11 @@
                         React.createElement('p', { className: 'text-gray-400 mt-2' }, 'Try selecting a different day or filter')
                     )
                     : React.createElement('div', { className: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' },
-                        ...sortedDisplayDeals.map((venueGroup, index) => {
+                        ...sortedDisplayDeals.flatMap((venueGroup, index) => {
                             const isAllView = dealType === 'all';
                             const hasMultipleDeals = venueGroup.deals.length > 1;
                             
-                            return React.createElement('div', {
+                            const venueCard = React.createElement('div', {
                                 key: index,
                                 className: 'bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow overflow-hidden'
                             },
@@ -851,6 +851,35 @@
                                     )
                                 )
                             );
+                            
+                            // Create promo card for Boulder Events
+                            const promoCard = React.createElement('a', {
+                                key: `promo-${index}`,
+                                href: 'https://boulderevents.vercel.app',
+                                target: '_blank',
+                                rel: 'noopener noreferrer',
+                                className: 'block bg-gradient-to-br from-purple-500 via-purple-600 to-purple-800 rounded-lg shadow-lg hover:shadow-2xl transition-all hover:scale-105 overflow-hidden',
+                                style: { minHeight: '400px', textDecoration: 'none' }
+                            },
+                                React.createElement('div', { 
+                                    className: 'p-10 text-center text-white flex flex-col items-center justify-center h-full gap-4'
+                                },
+                                    React.createElement('div', { className: 'text-6xl' }, '🎉'),
+                                    React.createElement('h3', { className: 'text-2xl font-bold' }, 'Looking for things to do in Boulder?'),
+                                    React.createElement('p', { className: 'text-xl font-semibold' }, 'Boulder Events Calendar'),
+                                    React.createElement('p', { className: 'text-base opacity-90' }, 'Discover live music, entertainment, and events in Boulder County'),
+                                    React.createElement('span', { 
+                                        className: 'inline-block bg-white text-purple-700 px-6 py-3 rounded-full font-semibold mt-4 hover:bg-purple-50 transition-colors'
+                                    }, 'Check It Out →')
+                                )
+                            );
+                            
+                            // Return venue card, and promo card after every 6th card
+                            if ((index + 1) % 6 === 0) {
+                                return [venueCard, promoCard];
+                            } else {
+                                return [venueCard];
+                            }
                         })
                     )
                 )
