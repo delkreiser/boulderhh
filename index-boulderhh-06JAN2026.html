@@ -94,10 +94,10 @@
                         margarita: (values[9] || '').toLowerCase().trim() === 'x',
                         nobo: (values[10] || '').toLowerCase().trim() === 'x',
                         sobo: (values[11] || '').toLowerCase().trim() === 'x',
-                        downtown: (values[12] || '').toLowerCase().trim() === 'x',
+                        dotobo: (values[12] || '').toLowerCase().trim() === 'x',
                         lesbo: (values[13] || '').toLowerCase().trim() === 'x',
                         thehill: (values[14] || '').toLowerCase().trim() === 'x',
-                        central: (values[15] || '').toLowerCase().trim() === 'x',
+                        ctpatown: (values[15] || '').toLowerCase().trim() === 'x',
                         latenight: (values[16] || '').toLowerCase().trim() === 'x',
                         taco_tuesday: (values[17] || '').toLowerCase().trim() === 'x',
                         url: (values[18] || '').trim()
@@ -785,10 +785,10 @@
                                             let neighborhood = '';
                                             if (deal.nobo) neighborhood = 'NoBo';
                                             else if (deal.sobo) neighborhood = 'SoBo';
-                                            else if (deal.downtown) neighborhood = 'Downtown';
+                                            else if (deal.dotobo) neighborhood = 'DoToBoCo';
                                             else if (deal.lesbo) neighborhood = 'LesBo';
                                             else if (deal.thehill) neighborhood = 'The Hill';
-                                            else if (deal.central) neighborhood = 'Central';
+                                            else if (deal.ctpatown) neighborhood = 'CtPa Town';
                                             
                                             return `📍 ${venueGroup.city}${neighborhood ? ` • 🏡 ${neighborhood}` : ''}`;
                                         })()
