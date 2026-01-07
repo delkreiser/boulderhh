@@ -56,18 +56,33 @@
         
         const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         
-        // Check if deal is currently featured (not expired)
+        // Get feature tier with expiration check
+        const getFeatureTier = (deal) => {
+            if (!deal.feature_tier) return null;
+            
+            // Check if expired
+            if (deal.feature_expiration) {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                const expirationDate = new Date(deal.feature_expiration);
+                expirationDate.setHours(23, 59, 59, 999);
+                
+                if (today > expirationDate) return null; // Expired
+            }
+            
+            // Valid tiers: basic, hot, premium
+            const tier = deal.feature_tier.toLowerCase();
+            if (['basic', 'hot', 'premium'].includes(tier)) {
+                return tier;
+            }
+            
+            return null;
+        };
+        
+        // Check if deal is currently featured (backwards compatibility)
         const isFeaturedActive = (deal) => {
-            if (!deal.featured) return false;
-            if (!deal.feature_expiration) return true; // No expiration = always featured
-            
-            const today = new Date();
-            today.setHours(0, 0, 0, 0); // Start of today
-            
-            const expirationDate = new Date(deal.feature_expiration);
-            expirationDate.setHours(23, 59, 59, 999); // End of expiration day
-            
-            return today <= expirationDate;
+            return getFeatureTier(deal) !== null;
         };
         
         function parseCSV(csvText) {
@@ -115,7 +130,7 @@
                         latenight: (values[16] || '').toLowerCase().trim() === 'x',
                         taco_tuesday: (values[17] || '').toLowerCase().trim() === 'x',
                         url: (values[18] || '').trim(),
-                        featured: (values[19] || '').toLowerCase().trim() === 'x',
+                        feature_tier: (values[19] || '').toLowerCase().trim(), // 'basic', 'hot', 'premium', or empty
                         feature_expiration: (values[20] || '').trim()
                     };
                     
@@ -389,15 +404,27 @@
                 const aTime = a.deals.length > 0 ? getStartTime(a.deals[0].time) : 9999;
                 const bTime = b.deals.length > 0 ? getStartTime(b.deals[0].time) : 9999;
                 
-                // Check if venues have featured deals
-                const aFeatured = a.deals.some(deal => isFeaturedActive(deal));
-                const bFeatured = b.deals.some(deal => isFeaturedActive(deal));
+                // Get feature tiers for both venues
+                const aTier = a.deals.map(deal => getFeatureTier(deal)).find(tier => tier !== null);
+                const bTier = b.deals.map(deal => getFeatureTier(deal)).find(tier => tier !== null);
                 
-                // Featured deals always come first
-                if (aFeatured && !bFeatured) return -1;
-                if (!aFeatured && bFeatured) return 1;
+                // Tier priority: premium > hot > basic > none
+                const tierPriority = {
+                    'premium': 1,
+                    'hot': 2,
+                    'basic': 3,
+                    null: 4
+                };
                 
-                // Within same featured status, sort by time
+                const aPriority = tierPriority[aTier] || tierPriority[null];
+                const bPriority = tierPriority[bTier] || tierPriority[null];
+                
+                // Sort by tier first, then by time
+                if (aPriority !== bPriority) {
+                    return aPriority - bPriority;
+                }
+                
+                // Within same tier, sort by time
                 return aTime - bTime;
             });
             
@@ -762,18 +789,61 @@
                         ...sortedDisplayDeals.flatMap((venueGroup, index) => {
                             const isAllView = dealType === 'all';
                             const hasMultipleDeals = venueGroup.deals.length > 1;
-                            const hasFeaturedDeal = venueGroup.deals.some(deal => isFeaturedActive(deal));
+                            
+                            // Get highest tier from venue's deals
+                            const venueTier = venueGroup.deals
+                                .map(deal => getFeatureTier(deal))
+                                .filter(tier => tier !== null)
+                                .sort((a, b) => {
+                                    const priority = { 'premium': 1, 'hot': 2, 'basic': 3 };
+                                    return priority[a] - priority[b];
+                                })[0] || null;
+                            
+                            const hasFeaturedDeal = venueTier !== null;
+                            
+                            // Tier-specific styling
+                            const getTierStyles = () => {
+                                if (!venueTier) return { border: '', badge: null };
+                                
+                                switch(venueTier) {
+                                    case 'premium':
+                                        return {
+                                            border: 'ring-4 ring-yellow-500 ring-opacity-100 shadow-2xl',
+                                            badge: { 
+                                                text: '⭐ PREMIUM', 
+                                                className: 'bg-gradient-to-r from-yellow-300 to-yellow-600 text-yellow-950' 
+                                            }
+                                        };
+                                    case 'hot':
+                                        return {
+                                            border: 'ring-4 ring-orange-500 ring-opacity-75 shadow-lg',
+                                            badge: { 
+                                                text: '🔥 HOT DEAL!', 
+                                                className: 'bg-gradient-to-r from-orange-400 to-red-500 text-white' 
+                                            }
+                                        };
+                                    case 'basic':
+                                    default:
+                                        return {
+                                            border: 'ring-4 ring-yellow-400 ring-opacity-75',
+                                            badge: { 
+                                                text: '⭐ Featured', 
+                                                className: 'bg-gradient-to-r from-yellow-400 to-yellow-500 text-yellow-900' 
+                                            }
+                                        };
+                                }
+                            };
+                            
+                            const tierStyles = getTierStyles();
                             
                             const venueCard = React.createElement('div', {
                                 key: index,
-                                className: `bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow overflow-hidden relative ${
-                                    hasFeaturedDeal ? 'ring-4 ring-yellow-400 ring-opacity-75' : ''
-                                }`
+                                className: `bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow overflow-hidden relative ${tierStyles.border}`
                             },
                                 // Featured Badge
-                                hasFeaturedDeal && React.createElement('div', {
-                                    className: 'absolute top-3 right-3 z-10 bg-gradient-to-r from-yellow-400 to-yellow-500 text-yellow-900 px-3 py-1 rounded-full text-sm font-bold shadow-lg flex items-center gap-1'
-                                }, '⭐ Featured'),
+                                hasFeaturedDeal && tierStyles.badge && React.createElement('div', {
+                                    className: `absolute top-3 right-3 z-10 ${tierStyles.badge.className} px-3 py-1 rounded-full text-sm font-bold shadow-lg flex items-center gap-1`
+                                }, tierStyles.badge.text),
                                 
                                 // Card Header
                                 React.createElement('div', {
