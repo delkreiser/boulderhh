@@ -56,6 +56,20 @@
         
         const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         
+        // Check if deal is currently featured (not expired)
+        const isFeaturedActive = (deal) => {
+            if (!deal.featured) return false;
+            if (!deal.feature_expiration) return true; // No expiration = always featured
+            
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // Start of today
+            
+            const expirationDate = new Date(deal.feature_expiration);
+            expirationDate.setHours(23, 59, 59, 999); // End of expiration day
+            
+            return today <= expirationDate;
+        };
+        
         function parseCSV(csvText) {
             const lines = csvText.split('\n');
             const result = [];
@@ -100,7 +114,9 @@
                         central: (values[15] || '').toLowerCase().trim() === 'x',
                         latenight: (values[16] || '').toLowerCase().trim() === 'x',
                         taco_tuesday: (values[17] || '').toLowerCase().trim() === 'x',
-                        url: (values[18] || '').trim()
+                        url: (values[18] || '').trim(),
+                        featured: (values[19] || '').toLowerCase().trim() === 'x',
+                        feature_expiration: (values[20] || '').trim()
                     };
                     
                     // Debug log for drinks with margarita tag
@@ -372,6 +388,16 @@
                 };
                 const aTime = a.deals.length > 0 ? getStartTime(a.deals[0].time) : 9999;
                 const bTime = b.deals.length > 0 ? getStartTime(b.deals[0].time) : 9999;
+                
+                // Check if venues have featured deals
+                const aFeatured = a.deals.some(deal => isFeaturedActive(deal));
+                const bFeatured = b.deals.some(deal => isFeaturedActive(deal));
+                
+                // Featured deals always come first
+                if (aFeatured && !bFeatured) return -1;
+                if (!aFeatured && bFeatured) return 1;
+                
+                // Within same featured status, sort by time
                 return aTime - bTime;
             });
             
@@ -736,11 +762,19 @@
                         ...sortedDisplayDeals.flatMap((venueGroup, index) => {
                             const isAllView = dealType === 'all';
                             const hasMultipleDeals = venueGroup.deals.length > 1;
+                            const hasFeaturedDeal = venueGroup.deals.some(deal => isFeaturedActive(deal));
                             
                             const venueCard = React.createElement('div', {
                                 key: index,
-                                className: 'bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow overflow-hidden'
+                                className: `bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow overflow-hidden relative ${
+                                    hasFeaturedDeal ? 'ring-4 ring-yellow-400 ring-opacity-75' : ''
+                                }`
                             },
+                                // Featured Badge
+                                hasFeaturedDeal && React.createElement('div', {
+                                    className: 'absolute top-3 right-3 z-10 bg-gradient-to-r from-yellow-400 to-yellow-500 text-yellow-900 px-3 py-1 rounded-full text-sm font-bold shadow-lg flex items-center gap-1'
+                                }, '⭐ Featured'),
+                                
                                 // Card Header
                                 React.createElement('div', {
                                     className: `p-4 ${
