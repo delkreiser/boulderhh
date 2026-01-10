@@ -160,7 +160,6 @@
             const [drinkFilter, setDrinkFilter] = useState('all');
             const [lateNightOnly, setLateNightOnly] = useState(false);
             const [showStickyFilters, setShowStickyFilters] = useState(false);
-            const [showContactModal, setShowContactModal] = useState(false);
             
             // Get current day
             useEffect(() => {
@@ -181,18 +180,6 @@
                 window.addEventListener('scroll', handleScroll);
                 return () => window.removeEventListener('scroll', handleScroll);
             }, []);
-            
-            // Close modal on Escape key
-            useEffect(() => {
-                const handleKeyDown = (e) => {
-                    if (e.key === 'Escape' && showContactModal) {
-                        setShowContactModal(false);
-                    }
-                };
-                
-                window.addEventListener('keydown', handleKeyDown);
-                return () => window.removeEventListener('keydown', handleKeyDown);
-            }, [showContactModal]);
             
             // Scroll to deals section when filters change (if sticky menu is visible)
             useEffect(() => {
@@ -455,46 +442,6 @@
             
             return React.createElement('div', { className: 'min-h-screen bg-gradient-to-b from-indigo-300 to-indigo-500' },
                 React.createElement('div', { className: 'container mx-auto px-4 py-8 max-w-6xl' },
-                
-                // Floating Feedback Button
-                React.createElement('button', {
-                    onClick: () => setShowContactModal(true),
-                    className: 'fixed bottom-6 right-6 z-40 bg-gradient-to-br from-purple-500 via-purple-600 to-purple-800 text-white px-4 py-3 md:px-5 md:py-3 rounded-full shadow-2xl hover:shadow-purple-500/50 hover:scale-105 transition-all font-semibold flex items-center gap-2',
-                    style: { minWidth: '60px' }
-                },
-                    React.createElement('span', { className: 'text-xl' }, '💬'),
-                    React.createElement('span', { className: 'hidden md:inline' }, 'Feedback')
-                ),
-                
-                // Contact Modal
-                showContactModal && React.createElement('div', {
-                    className: 'fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm',
-                    onClick: (e) => {
-                        if (e.target === e.currentTarget) setShowContactModal(false);
-                    }
-                },
-                    React.createElement('div', {
-                        className: 'bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden relative',
-                        onClick: (e) => e.stopPropagation()
-                    },
-                        // Close button
-                        React.createElement('button', {
-                            onClick: () => setShowContactModal(false),
-                            className: 'absolute top-4 right-4 z-10 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-full w-10 h-10 flex items-center justify-center transition-colors font-bold text-xl',
-                            'aria-label': 'Close'
-                        }, '✕'),
-                        
-                        // JotForm iframe
-                        React.createElement('iframe', {
-                            src: 'https://form.jotform.com/260067743464056',
-                            width: '100%',
-                            height: '600',
-                            frameBorder: '0',
-                            scrolling: 'yes',
-                            className: 'w-full h-[600px]'
-                        })
-                    )
-                ),
                 // Sticky Floating Glass Filter Menu (appears on scroll)
                 showStickyFilters && React.createElement('div', { 
                     className: 'fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-5xl px-4 animate-fadeIn'
@@ -1041,18 +988,6 @@
                                 return [venueCard];
                             }
                         })
-                    )
-                ),
-                
-                // Footer - Submit Happy Hour CTA
-                React.createElement('div', { className: 'text-center py-12 mt-8' },
-                    React.createElement('p', { className: 'text-white text-lg mb-4' }, 'Know a happy hour we\'re missing?'),
-                    React.createElement('button', {
-                        onClick: () => setShowContactModal(true),
-                        className: 'inline-flex items-center gap-2 bg-white/80 backdrop-blur-md hover:bg-white text-indigo-900 px-6 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all hover:scale-105'
-                    },
-                        React.createElement('span', null, '📝'),
-                        React.createElement('span', null, 'Submit a Happy Hour')
                     )
                 )
                 ) // Close inner container div
