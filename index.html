@@ -456,10 +456,10 @@
             return React.createElement('div', { className: 'min-h-screen bg-gradient-to-b from-indigo-300 to-indigo-500' },
                 React.createElement('div', { className: 'container mx-auto px-4 py-8 max-w-6xl' },
                 
-                // Floating Feedback Button
-                React.createElement('button', {
+                // Floating Feedback Button (hide when modal is open)
+                !showContactModal && React.createElement('button', {
                     onClick: () => setShowContactModal(true),
-                    className: 'fixed bottom-6 right-6 z-40 bg-gradient-to-br from-purple-500 via-purple-600 to-purple-800 text-white px-4 py-3 md:px-5 md:py-3 rounded-full shadow-2xl hover:shadow-purple-500/50 hover:scale-105 transition-all font-semibold flex items-center gap-2',
+                    className: 'fixed bottom-6 right-6 z-40 bg-white/80 backdrop-blur-md border border-white/40 text-indigo-900 px-4 py-3 md:px-5 md:py-3 rounded-full shadow-2xl hover:bg-white/95 hover:scale-105 transition-all font-semibold flex items-center gap-2',
                     style: { minWidth: '60px' }
                 },
                     React.createElement('span', { className: 'text-xl' }, '💬'),
