@@ -495,8 +495,8 @@
                         })
                     )
                 ),
-                // Sticky Floating Glass Filter Menu (appears on scroll)
-                showStickyFilters && React.createElement('div', { 
+                // Sticky Floating Glass Filter Menu (appears on scroll, hidden when contact modal is open)
+                showStickyFilters && !showContactModal && React.createElement('div', { 
                     className: 'fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-5xl px-4 animate-fadeIn'
                 },
                     React.createElement('div', { 
