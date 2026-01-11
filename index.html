@@ -154,7 +154,8 @@
                         feature_tier: (values[19] || '').toLowerCase().trim(), // 'basic', 'hot', 'premium', or empty
                         feature_expiration: (values[20] || '').trim(),
                         show_ad_card: (values[21] || '').toLowerCase().trim() === 'x',
-                        feature_priority: parseInt(values[22] || '999') // Priority: 1 = first, 2 = second, etc. Default 999 = last
+                        feature_priority: parseInt(values[22] || '999'), // Priority: 1 = first, 2 = second, etc. Default 999 = last
+                        coffee: (values[23] || '').toLowerCase().trim() === 'x'
                     };
                     
                     // Debug log for drinks with margarita tag
@@ -358,6 +359,9 @@
             
             // Check if ad card should be shown (if any deal has show_ad_card = true)
             const showAdCard = deals.some(deal => deal.show_ad_card);
+            
+            // Check if coffee card should be shown (if any deal has coffee = true)
+            const showCoffeeCard = deals.some(deal => deal.coffee);
             
             // Group deals by venue when in "All" view
             let displayDeals;
@@ -1094,12 +1098,39 @@
                                 )
                             );
                             
-                            // Return venue card, ad card at position 3, and promo card after every 6th card
+                            // Create coffee card
+                            const coffeeCard = showCoffeeCard && index === 3 && React.createElement('a', {
+                                key: 'coffee-card',
+                                href: 'https://buymeacoffee.com/boulderevents',
+                                target: '_blank',
+                                rel: 'noopener noreferrer',
+                                className: 'block bg-gradient-to-br from-amber-600 via-orange-500 to-yellow-500 rounded-lg shadow-lg hover:shadow-2xl transition-all hover:scale-105 overflow-hidden',
+                                style: { minHeight: '180px', textDecoration: 'none' }
+                            },
+                                React.createElement('div', { 
+                                    className: 'p-8 text-center text-white flex flex-col items-center justify-center h-full gap-4'
+                                },
+                                    React.createElement('h3', { className: 'text-2xl font-bold' }, 'Love the project?'),
+                                    React.createElement('span', { 
+                                        className: 'inline-flex items-center gap-2 bg-white text-orange-700 px-6 py-2.5 rounded-full font-semibold hover:bg-orange-50 transition-colors'
+                                    },
+                                        React.createElement('span', null, '☕'),
+                                        React.createElement('span', null, 'Buy me a coffee')
+                                    )
+                                )
+                            );
+                            
+                            // Return venue card, ad card at position 3, coffee card at position 4, and promo card after every 6th card
                             const cards = [venueCard];
                             
                             // Add ad card at position 3 (index 2)
                             if (adCard) {
                                 cards.push(adCard);
+                            }
+                            
+                            // Add coffee card at position 4 (index 3)
+                            if (coffeeCard) {
+                                cards.push(coffeeCard);
                             }
                             
                             // Add promo card after every 6th venue card
