@@ -153,7 +153,8 @@
                         url: (values[18] || '').trim(),
                         feature_tier: (values[19] || '').toLowerCase().trim(), // 'basic', 'hot', 'premium', or empty
                         feature_expiration: (values[20] || '').trim(),
-                        show_ad_card: (values[21] || '').toLowerCase().trim() === 'x'
+                        show_ad_card: (values[21] || '').toLowerCase().trim() === 'x',
+                        feature_priority: parseInt(values[22] || '999') // Priority: 1 = first, 2 = second, etc. Default 999 = last
                     };
                     
                     // Debug log for drinks with margarita tag
@@ -442,9 +443,13 @@
                 const aTime = a.deals.length > 0 ? getStartTime(a.deals[0].time) : 9999;
                 const bTime = b.deals.length > 0 ? getStartTime(b.deals[0].time) : 9999;
                 
-                // Get feature tiers for both venues
+                // Get feature tiers and priorities for both venues
                 const aTier = a.deals.map(deal => getFeatureTier(deal)).find(tier => tier !== null);
                 const bTier = b.deals.map(deal => getFeatureTier(deal)).find(tier => tier !== null);
+                
+                // Get feature priority (lower number = higher priority)
+                const aFeaturePriority = a.deals.map(deal => deal.feature_priority || 999).reduce((min, val) => Math.min(min, val), 999);
+                const bFeaturePriority = b.deals.map(deal => deal.feature_priority || 999).reduce((min, val) => Math.min(min, val), 999);
                 
                 // Tier priority: premium > hot > basic > none
                 const tierPriority = {
@@ -454,15 +459,20 @@
                     null: 4
                 };
                 
-                const aPriority = tierPriority[aTier] || tierPriority[null];
-                const bPriority = tierPriority[bTier] || tierPriority[null];
+                const aTierPriority = tierPriority[aTier] || tierPriority[null];
+                const bTierPriority = tierPriority[bTier] || tierPriority[null];
                 
-                // Sort by tier first, then by time
-                if (aPriority !== bPriority) {
-                    return aPriority - bPriority;
+                // Sort by tier first
+                if (aTierPriority !== bTierPriority) {
+                    return aTierPriority - bTierPriority;
                 }
                 
-                // Within same tier, sort by time
+                // Within same tier, sort by feature priority (1, 2, 3...)
+                if (aFeaturePriority !== bFeaturePriority) {
+                    return aFeaturePriority - bFeaturePriority;
+                }
+                
+                // Within same tier and priority, sort by time
                 return aTime - bTime;
             });
             
