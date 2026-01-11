@@ -892,14 +892,13 @@
                                     case 'basic':
                                     default:
                                         return {
-                                            border: 'ring-4 animate-pulseGlow',
+                                            border: 'animate-pulseGlow',
                                             badge: { 
                                                 text: '⭐ Featured', 
                                                 className: 'bg-gradient-to-r from-[#FFD703] to-[#FFC700] text-yellow-950' 
                                             },
                                             style: {
-                                                '--tw-ring-color': '#FFD703',
-                                                '--tw-ring-opacity': '1'
+                                                border: '4px solid #FFD703'
                                             }
                                         };
                                 }
