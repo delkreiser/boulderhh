@@ -868,7 +868,7 @@
                             
                             // Tier-specific styling
                             const getTierStyles = () => {
-                                if (!venueTier) return { border: '', badge: null };
+                                if (!venueTier) return { border: '', badge: null, style: {} };
                                 
                                 switch(venueTier) {
                                     case 'premium':
@@ -877,7 +877,8 @@
                                             badge: { 
                                                 text: '⭐ PREMIUM', 
                                                 className: 'bg-gradient-to-r from-yellow-300 to-yellow-600 text-yellow-950' 
-                                            }
+                                            },
+                                            style: {}
                                         };
                                     case 'hot':
                                         return {
@@ -885,15 +886,20 @@
                                             badge: { 
                                                 text: '🔥 HOT DEAL!', 
                                                 className: 'bg-gradient-to-r from-orange-400 to-red-500 text-white' 
-                                            }
+                                            },
+                                            style: {}
                                         };
                                     case 'basic':
                                     default:
                                         return {
-                                            border: 'ring-4 ring-[#FFD703] animate-pulseGlow',
+                                            border: 'ring-4 animate-pulseGlow',
                                             badge: { 
                                                 text: '⭐ Featured', 
                                                 className: 'bg-gradient-to-r from-[#FFD703] to-[#FFC700] text-yellow-950' 
+                                            },
+                                            style: {
+                                                '--tw-ring-color': '#FFD703',
+                                                '--tw-ring-opacity': '1'
                                             }
                                         };
                                 }
@@ -903,7 +909,8 @@
                             
                             const venueCard = React.createElement('div', {
                                 key: index,
-                                className: `bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow overflow-hidden relative ${tierStyles.border}`
+                                className: `bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow overflow-hidden relative ${tierStyles.border}`,
+                                style: tierStyles.style || {}
                             },
                                 // Featured Badge
                                 hasFeaturedDeal && tierStyles.badge && React.createElement('div', {
