@@ -27,13 +27,25 @@
         tailwind.config = {
             theme: {
                 extend: {
+                    colors: {
+                        'featured-yellow': '#FFD703'
+                    },
                     animation: {
-                        fadeIn: 'fadeIn 0.3s ease-out'
+                        fadeIn: 'fadeIn 0.3s ease-out',
+                        pulseGlow: 'pulseGlow 2s ease-in-out infinite'
                     },
                     keyframes: {
                         fadeIn: {
                             '0%': { opacity: '0', transform: 'translate(-50%, -20px)' },
                             '100%': { opacity: '1', transform: 'translate(-50%, 0)' }
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { 
+                                boxShadow: '0 0 20px rgba(255, 215, 3, 0.6), 0 0 40px rgba(255, 215, 3, 0.3), 0 0 60px rgba(255, 215, 3, 0.1)' 
+                            },
+                            '50%': { 
+                                boxShadow: '0 0 30px rgba(255, 215, 3, 0.8), 0 0 60px rgba(255, 215, 3, 0.5), 0 0 80px rgba(255, 215, 3, 0.2)' 
+                            }
                         }
                     }
                 }
@@ -878,10 +890,10 @@
                                     case 'basic':
                                     default:
                                         return {
-                                            border: 'ring-4 ring-yellow-400 ring-opacity-75',
+                                            border: 'ring-4 ring-[#FFD703] animate-pulseGlow',
                                             badge: { 
                                                 text: '⭐ Featured', 
-                                                className: 'bg-gradient-to-r from-yellow-400 to-yellow-500 text-yellow-900' 
+                                                className: 'bg-gradient-to-r from-[#FFD703] to-[#FFC700] text-yellow-950' 
                                             }
                                         };
                                 }
