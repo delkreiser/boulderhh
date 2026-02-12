@@ -11,9 +11,10 @@ export default async function handler(req, res) {
     
     const csvData = await response.text();
     
-    // Set CORS headers
+    // Set CORS and caching headers
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=60');
     res.status(200).send(csvData);
     
   } catch (error) {
