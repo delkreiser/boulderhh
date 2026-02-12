@@ -8,10 +8,10 @@
 
 ## Medium Priority
 
-- [ ] **Replace `React.createElement` with HTM** — Use the `htm` library for JSX-like syntax without a build step. Makes the UI code readable and maintainable.
+- [x] **Replace `React.createElement` with HTM** — Converted all `React.createElement` calls in `app.js` to HTM tagged templates (`html\`...\``). Also extracted helper functions (`scrollToDeals`, `getCardHeaderClass`, `getNeighborhood`) and shared class builders (`dayBtnClass`, `dealTypeBtnClass`, etc.).
 - [x] **Eliminate code duplication** — Starfield styles extracted to `STARFIELD_ACTIVE_STYLE`/`STARFIELD_INACTIVE_STYLE` constants (was 6 copies). `getStartTime()` deduplicated to single function in `filters.js` (was 3 copies). `groupByVenue()` deduplicated (was 2 identical branches). `getTierStyles()` extracted to `features.js`.
-- [ ] **Harden CSV parser** — Parser uses positional column indexes (0-23) instead of reading header names. Adding a column to the sheet breaks everything. Also doesn't handle escaped quotes (`""`). Parse the header row for resilient field mapping.
-- [ ] **Add `vercel.json`** — No deployment config exists. Add caching headers for static assets, security headers (CSP, X-Frame-Options), and redirect rules.
+- [x] **Harden CSV parser** — Parser now reads the header row and builds a column-name-to-index map. Fields are looked up by name, not position. Escaped quotes (`""`) are now handled correctly. Adding/reordering columns in the sheet no longer breaks the app.
+- [x] **Add `vercel.json`** — Added deployment config with: image caching (7-day edge, 1-day browser), JS file caching (1-day edge with stale-while-revalidate), and security headers (X-Content-Type-Options, X-Frame-Options, Referrer-Policy).
 
 ## Low Priority
 
