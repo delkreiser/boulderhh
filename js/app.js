@@ -95,7 +95,6 @@ function App() {
     }, []);
 
     const filteredDeals = filterDeals(deals, selectedDay, dealType, drinkFilter, lateNightOnly);
-    const showAdCard = deals.some(deal => deal.show_ad_card);
     const showCoffeeCard = deals.some(deal => deal.coffee);
     const displayDeals = groupByVenue(filteredDeals);
     sortVenueDeals(displayDeals);
@@ -365,17 +364,6 @@ function App() {
                             </a>
                         `;
 
-                        const adCard = showAdCard && index === 2 && html`
-                            <a key="ad-card" href="/advertise.html"
-                                class="block bg-gradient-to-br from-yellow-500 via-amber-500 to-orange-600 rounded-lg shadow-lg hover:shadow-2xl transition-all hover:scale-105 overflow-hidden"
-                                style=${{ minHeight: '180px', textDecoration: 'none' }}>
-                                <div class="p-8 text-center text-white flex flex-col items-center justify-center h-full gap-4">
-                                    <h3 class="text-2xl font-bold">Advertise Your Happy Hour</h3>
-                                    <span class="inline-block bg-white text-amber-700 px-6 py-2.5 rounded-full font-semibold hover:bg-amber-50 transition-colors">Learn More →</span>
-                                </div>
-                            </a>
-                        `;
-
                         const coffeeCard = showCoffeeCard && index === 3 && html`
                             <a key="coffee-card" href="https://buymeacoffee.com/boulderevents" target="_blank" rel="noopener noreferrer"
                                 class="block bg-gradient-to-br from-amber-600 via-orange-500 to-yellow-500 rounded-lg shadow-lg hover:shadow-2xl transition-all hover:scale-105 overflow-hidden"
@@ -391,7 +379,6 @@ function App() {
                         `;
 
                         const cards = [venueCard];
-                        if (adCard) cards.push(adCard);
                         if (coffeeCard) cards.push(coffeeCard);
                         if ((index + 1) % 6 === 0) cards.push(promoCard);
                         return cards;

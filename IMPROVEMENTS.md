@@ -16,7 +16,7 @@
 ## Low Priority
 
 - [ ] **Add error retry logic** — Failed fetches show a static error message with no recovery option. Add a retry button and optional auto-retry.
-- [ ] **Remove stale backup HTML files** — Three dated backup files (`index-boulderhh-06JAN2026.html`, etc.) clutter the repo. Git provides version history already.
-- [ ] **Fix missing `/advertise.html`** — Ad card links to `/advertise.html` which doesn't exist in the repo (404).
-- [ ] **Expand `.gitignore`** — Currently only ignores `.DS_Store`. Add `node_modules/`, `.vercel/`, `.env`, etc.
+- [x] **Remove stale backup HTML files** — Removed by user.
+- [x] **Remove advertise card** — Ad card and all `showAdCard`/`show_ad_card` references removed from `app.js`. Advertising feature shelved.
+- [x] **Expand `.gitignore`** — Added `node_modules/`, `.vercel/`, `.env`, `.env.local`, `.env.*.local`.
 - [x] **Remove production `console.log` statements** — Removed debug logging from `csvParser.js` (margarita debug log, total deals log, all deals dump).
