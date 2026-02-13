@@ -156,15 +156,6 @@ function App() {
     return html`<div class="min-h-screen bg-gradient-to-b from-indigo-300 to-indigo-500">
       <div class="container mx-auto px-4 py-8 max-w-6xl">
 
-        ${!showContactModal && html`
-            <button onClick=${() => setShowContactModal(true)}
-                class="fixed bottom-6 right-6 z-40 bg-white/80 backdrop-blur-md border border-white/40 text-indigo-900 px-4 py-3 md:px-5 md:py-3 rounded-full shadow-2xl hover:bg-white/95 hover:scale-105 transition-all font-semibold flex items-center gap-2"
-                style=${{ minWidth: '60px' }}>
-                <span class="text-xl">💬</span>
-                <span class="hidden md:inline">Feedback</span>
-            </button>
-        `}
-
         ${showContactModal && html`
             <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
                 onClick=${(e) => { if (e.target === e.currentTarget) setShowContactModal(false); }}>
