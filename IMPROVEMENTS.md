@@ -15,7 +15,7 @@
 
 ## Low Priority
 
-- [ ] **Add error retry logic** — Failed fetches show a static error message with no recovery option. Add a retry button and optional auto-retry.
+- [x] **Add error retry logic** — Extracted `fetchDeals` as a reusable function. Error state now shows a "🔄 Try Again" button that re-fetches data. Loading/error states reset properly on retry.
 - [x] **Remove stale backup HTML files** — Removed by user.
 - [x] **Remove advertise card** — Ad card and all `showAdCard`/`show_ad_card` references removed from `app.js`. Advertising feature shelved.
 - [x] **Expand `.gitignore`** — Added `node_modules/`, `.vercel/`, `.env`, `.env.local`, `.env.*.local`.

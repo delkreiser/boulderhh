@@ -77,22 +77,23 @@ function App() {
         if (showStickyFilters) scrollToDeals();
     }, [selectedDay, dealType, drinkFilter, lateNightOnly]);
 
-    useEffect(() => {
-        async function fetchDeals() {
-            try {
-                const response = await fetch(SHEET_CSV_URL);
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                const csvText = await response.text();
-                setDeals(parseCSV(csvText));
-                setLoading(false);
-            } catch (err) {
-                console.error('Error fetching deals:', err);
-                setError('Failed to load deals. Please refresh the page.');
-                setLoading(false);
-            }
+    const fetchDeals = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await fetch(SHEET_CSV_URL);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const csvText = await response.text();
+            setDeals(parseCSV(csvText));
+        } catch (err) {
+            console.error('Error fetching deals:', err);
+            setError('Failed to load deals.');
+        } finally {
+            setLoading(false);
         }
-        fetchDeals();
-    }, []);
+    };
+
+    useEffect(() => { fetchDeals(); }, []);
 
     const filteredDeals = filterDeals(deals, selectedDay, dealType, drinkFilter, lateNightOnly);
     const showCoffeeCard = deals.some(deal => deal.coffee);
@@ -142,7 +143,13 @@ function App() {
 
     if (error) {
         return html`<div class="flex items-center justify-center min-h-screen">
-            <div class="text-xl text-red-600">${error}</div>
+            <div class="text-center">
+                <p class="text-xl text-red-600 mb-4">${error}</p>
+                <button onClick=${fetchDeals}
+                    class="px-6 py-3 bg-indigo-600 text-white rounded-full font-semibold hover:bg-indigo-700 transition-colors shadow-lg">
+                    🔄 Try Again
+                </button>
+            </div>
         </div>`;
     }
 
